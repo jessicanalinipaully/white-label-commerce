@@ -15,6 +15,7 @@ import { CartModule } from './cart/cart.module';
 import { OrderModule } from './order/order.module';
 import { ShippingModule } from './shipping/shipping.module';
 import { PaymentModule } from './payment/payment.module';
+import { AdminModule } from './admin/admin.module';
 import { TenantMiddleware } from './tenant/tenant.middleware';
 
 @Module({
@@ -38,6 +39,7 @@ import { TenantMiddleware } from './tenant/tenant.middleware';
     OrderModule,
     ShippingModule,
     PaymentModule,
+    AdminModule,
   ],
 })
 export class AppModule implements NestModule {
