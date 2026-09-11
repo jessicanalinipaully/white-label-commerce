@@ -119,11 +119,22 @@ export class OrderService {
           );
         }
 
-        // Deduct inventory transactionally
-        await tx.inventory.update({
-          where: { id: inventory.id },
-          data: { quantity: { decrement: item.quantity } },
+        // Deduct inventory atomically at database row-lock level, ensuring quantity >= reservedQuantity + item.quantity
+        const updateResult = await tx.inventory.updateMany({
+          where: {
+            id: inventory.id,
+            quantity: { gte: inventory.reservedQuantity + item.quantity },
+          },
+          data: {
+            quantity: { decrement: item.quantity },
+          },
         });
+
+        if (updateResult.count === 0) {
+          throw new BadRequestException(
+            `Insufficient inventory for "${item.product.name} - ${item.variant.name}". Requested: ${item.quantity}`,
+          );
+        }
 
         // Server-side price calculation
         const unitPrice = item.variant.price !== null && item.variant.price !== undefined

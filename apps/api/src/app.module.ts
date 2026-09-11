@@ -17,6 +17,7 @@ import { ShippingModule } from './shipping/shipping.module';
 import { PaymentModule } from './payment/payment.module';
 import { AdminModule } from './admin/admin.module';
 import { TenantMiddleware } from './tenant/tenant.middleware';
+import { RateLimiterMiddleware } from './common/middleware/rate-limiter.middleware';
 
 @Module({
   imports: [
@@ -44,6 +45,6 @@ import { TenantMiddleware } from './tenant/tenant.middleware';
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(TenantMiddleware).forRoutes('*');
+    consumer.apply(TenantMiddleware, RateLimiterMiddleware).forRoutes('*');
   }
 }
