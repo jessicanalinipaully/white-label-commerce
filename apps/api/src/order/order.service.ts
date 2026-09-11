@@ -6,7 +6,7 @@ import {
 import { PrismaService } from '../database/prisma.service';
 import { CustomerService } from '../customer/customer.service';
 import { CheckoutDto } from './dto/checkout.dto';
-import { CartStatus, OrderStatus, PaginatedResult, PaymentStatus } from '@commerce/types';
+import { CartStatus, OrderStatus, OrderPaymentStatus, PaginatedResult, PaymentStatus } from '@commerce/types';
 
 @Injectable()
 export class OrderService {
@@ -184,7 +184,7 @@ export class OrderService {
           customerId: customer.id,
           orderNumber,
           status: OrderStatus.PENDING,
-          paymentStatus: PaymentStatus.PENDING,
+          paymentStatus: OrderPaymentStatus.PENDING,
           subtotal,
           shippingAmount,
           taxAmount,

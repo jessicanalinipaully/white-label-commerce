@@ -43,6 +43,14 @@ enum OrderStatus {
 
 enum PaymentStatus {
   PENDING
+  AUTHORIZED
+  CAPTURED
+  FAILED
+  REFUNDED
+}
+
+enum OrderPaymentStatus {
+  PENDING
   PAID
   FAILED
   REFUNDED
@@ -62,22 +70,24 @@ model User {
 }
 
 model Store {
-  id          String            @id @default(cuid())
-  name        String
-  slug        String            @unique
-  status      StoreStatus       @default(ACTIVE)
-  createdAt   DateTime          @default(now())
-  updatedAt   DateTime          @updatedAt
-  domains     StoreDomain[]
-  users       StoreUser[]
-  categories  Category[]
-  products    Product[]
-  variants    ProductVariant[]
-  inventories Inventory[]
-  customers   Customer[]
-  addresses   CustomerAddress[]
-  carts       Cart[]
-  orders      Order[]
+  id            String            @id @default(cuid())
+  name          String
+  slug          String            @unique
+  status        StoreStatus       @default(ACTIVE)
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+  domains       StoreDomain[]
+  users         StoreUser[]
+  categories    Category[]
+  products      Product[]
+  variants      ProductVariant[]
+  inventories   Inventory[]
+  customers     Customer[]
+  addresses     CustomerAddress[]
+  carts         Cart[]
+  orders        Order[]
+  payments      Payment[]
+  shippingRates ShippingRate[]
 }
 
 model StoreDomain {
@@ -280,8 +290,8 @@ model Order {
   customerId              String
   customer                Customer      @relation(fields: [customerId], references: [id], onDelete: Cascade)
   orderNumber             String        @unique
-  status                  OrderStatus   @default(PENDING)
-  paymentStatus           PaymentStatus @default(PENDING)
+  status                  OrderStatus        @default(PENDING)
+  paymentStatus           OrderPaymentStatus @default(PENDING)
   subtotal                Decimal       @db.Decimal(10, 2)
   shippingAmount          Decimal       @default(0) @db.Decimal(10, 2)
   taxAmount               Decimal       @default(0) @db.Decimal(10, 2)
@@ -291,12 +301,18 @@ model Order {
   shippingAddressSnapshot Json
   billingAddressSnapshot  Json
   notes                   String?
+  shippingRateId          String?
+  shippingRate            ShippingRate? @relation(fields: [shippingRateId], references: [id], onDelete: SetNull)
+  shippingProvider        String?
+  shippingStatus          String?       @default("UNSHIPPED")
   createdAt               DateTime      @default(now())
   updatedAt               DateTime      @updatedAt
   items                   OrderItem[]
+  payments                Payment[]
 
   @@index([storeId, customerId])
   @@index([storeId, status])
+  @@index([shippingRateId])
 }
 
 model OrderItem {
@@ -316,4 +332,43 @@ model OrderItem {
   productImageUrl String?
 
   @@index([orderId])
+}
+
+model Payment {
+  id                String        @id @default(cuid())
+  storeId           String
+  store             Store         @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  orderId           String
+  order             Order         @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  provider          String
+  providerPaymentId String?
+  providerOrderId   String?
+  amount            Decimal       @db.Decimal(10, 2)
+  currency          String        @default("INR")
+  status            PaymentStatus @default(PENDING)
+  metadata          Json?
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+
+  @@index([storeId])
+  @@index([orderId])
+  @@index([providerOrderId])
+}
+
+model ShippingRate {
+  id               String   @id @default(cuid())
+  storeId          String
+  store            Store    @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  name             String
+  provider         String
+  amount           Decimal  @db.Decimal(10, 2)
+  currency         String   @default("INR")
+  estimatedDaysMin Int?
+  estimatedDaysMax Int?
+  isActive         Boolean  @default(true)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  orders           Order[]
+
+  @@index([storeId])
 }

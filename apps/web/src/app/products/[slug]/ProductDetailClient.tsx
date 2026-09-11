@@ -26,7 +26,7 @@ export function ProductDetailClient({ product }: { product: Product }) {
   // Dynamic inventory check
   const inventory = selectedVariant?.inventory;
   const availableQty = inventory ? inventory.quantity - inventory.reservedQuantity : 999;
-  const isOutOfStock = availableQty <= 0 || (selectedVariant && !selectedVariant.isActive);
+  const isOutOfStock = Boolean(availableQty <= 0 || (selectedVariant && !selectedVariant.isActive));
 
   const handleAddToCart = () => {
     if (isOutOfStock) return;
