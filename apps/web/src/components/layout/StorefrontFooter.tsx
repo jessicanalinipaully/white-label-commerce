@@ -1,12 +1,18 @@
+'use client';
+
 import Link from 'next/link';
 import { StoreInfo } from '@/lib/api/types';
+import { useTheme } from '@/context/ThemeContext';
 
 interface StorefrontFooterProps {
   storeInfo: StoreInfo | null;
 }
 
 export function StorefrontFooter({ storeInfo }: StorefrontFooterProps) {
-  const storeName = storeInfo?.name || 'White Label Store';
+  const { config } = useTheme();
+  const branding = config?.branding;
+  const storeName = branding?.storeDisplayName || storeInfo?.name || 'White Label Store';
+  const tagline = branding?.tagline || 'Powered by White Label E-Commerce Platform. High quality products curated just for you.';
 
   return (
     <footer className="bg-slate-950 border-t border-slate-800 text-slate-400 py-12 mt-20">
@@ -15,9 +21,7 @@ export function StorefrontFooter({ storeInfo }: StorefrontFooterProps) {
           {/* Col 1 */}
           <div className="space-y-3">
             <h3 className="font-bold text-white text-lg">{storeName}</h3>
-            <p className="text-sm text-slate-500">
-              Powered by White Label E-Commerce Platform. High quality products curated just for you.
-            </p>
+            <p className="text-sm text-slate-500">{tagline}</p>
           </div>
 
           {/* Col 2 */}

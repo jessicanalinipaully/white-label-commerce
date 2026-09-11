@@ -147,4 +147,67 @@ export class StorefrontService {
     const products = await this.getProducts(storeId, { ...query, categoryId: category.id });
     return { category, products };
   }
+
+  async getStorefrontConfig(storeId: string): Promise<any> {
+    const store = await this.prisma.store.findUnique({
+      where: { id: storeId },
+      select: { id: true, name: true, slug: true },
+    });
+    if (!store) throw new NotFoundException('Store not found');
+
+    const [branding, theme, homepage] = await Promise.all([
+      this.prisma.storeBranding.findUnique({ where: { storeId } }),
+      this.prisma.storeTheme.findUnique({ where: { storeId } }),
+      this.prisma.storeHomepage.findUnique({
+        where: { storeId },
+        include: {
+          sections: {
+            where: { isActive: true },
+            orderBy: { sortOrder: 'asc' },
+            include: {
+              product: {
+                where: { isActive: true },
+                include: { images: { orderBy: { sortOrder: 'asc' }, take: 1 } },
+              },
+              category: {
+                where: { isActive: true },
+              },
+            },
+          },
+        },
+      }),
+    ]);
+
+    return {
+      store,
+      branding: branding || {
+        storeDisplayName: store.name,
+        logoUrl: null,
+        faviconUrl: null,
+        tagline: null,
+        socialPreviewImageUrl: null,
+      },
+      theme: theme || {
+        primaryColor: '#000000',
+        secondaryColor: '#4F46E5',
+        accentColor: '#10B981',
+        backgroundColor: '#FFFFFF',
+        textColor: '#111827',
+        headingFont: 'Inter',
+        bodyFont: 'Inter',
+        borderRadius: '8px',
+        buttonStyle: 'rounded',
+      },
+      homepage: homepage
+        ? {
+            id: homepage.id,
+            title: homepage.title,
+            metaTitle: homepage.metaTitle,
+            metaDescription: homepage.metaDescription,
+            sections: homepage.sections || [],
+          }
+        : { title: 'Home', sections: [] },
+      sections: homepage?.sections || [],
+    };
+  }
 }

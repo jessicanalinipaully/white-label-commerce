@@ -3,6 +3,8 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
+  HttpStatus,
   Param,
   Patch,
   Post,
@@ -30,6 +32,14 @@ import {
   UpdateStoreDto,
   UpdateVariantDto,
 } from './dto/admin.dto';
+import {
+  CreateHomepageSectionDto,
+  ReorderHomepageSectionsDto,
+  UpdateBrandingDto,
+  UpdateHomepageDto,
+  UpdateHomepageSectionDto,
+  UpdateThemeDto,
+} from './dto/theme-cms.dto';
 
 @Controller('admin')
 @UseGuards(JwtAuthGuard, TenantAuthGuard, StoreRoleGuard)
@@ -334,5 +344,79 @@ export class AdminController {
   @StoreRoles(StoreUserRole.OWNER, StoreUserRole.ADMIN)
   updateStore(@CurrentTenant() tenant: TenantContext, @Body() dto: UpdateStoreDto) {
     return this.adminService.updateStore(tenant.store.id, dto);
+  }
+
+  /** 10. THEME MANAGEMENT */
+  @Get('theme')
+  @StoreRoles(StoreUserRole.OWNER, StoreUserRole.ADMIN, StoreUserRole.MANAGER)
+  getTheme(@CurrentTenant() tenant: TenantContext) {
+    return this.adminService.getTheme(tenant.store.id);
+  }
+
+  @Patch('theme')
+  @StoreRoles(StoreUserRole.OWNER, StoreUserRole.ADMIN, StoreUserRole.MANAGER)
+  updateTheme(@CurrentTenant() tenant: TenantContext, @Body() dto: UpdateThemeDto) {
+    return this.adminService.updateTheme(tenant.store.id, dto);
+  }
+
+  /** 11. BRANDING MANAGEMENT */
+  @Get('branding')
+  @StoreRoles(StoreUserRole.OWNER, StoreUserRole.ADMIN, StoreUserRole.MANAGER)
+  getBranding(@CurrentTenant() tenant: TenantContext) {
+    return this.adminService.getBranding(tenant.store.id);
+  }
+
+  @Patch('branding')
+  @StoreRoles(StoreUserRole.OWNER, StoreUserRole.ADMIN, StoreUserRole.MANAGER)
+  updateBranding(@CurrentTenant() tenant: TenantContext, @Body() dto: UpdateBrandingDto) {
+    return this.adminService.updateBranding(tenant.store.id, dto);
+  }
+
+  /** 12. HOMEPAGE CMS */
+  @Get('homepage')
+  @StoreRoles(StoreUserRole.OWNER, StoreUserRole.ADMIN, StoreUserRole.MANAGER)
+  getHomepage(@CurrentTenant() tenant: TenantContext) {
+    return this.adminService.getHomepage(tenant.store.id);
+  }
+
+  @Patch('homepage')
+  @StoreRoles(StoreUserRole.OWNER, StoreUserRole.ADMIN, StoreUserRole.MANAGER)
+  updateHomepage(@CurrentTenant() tenant: TenantContext, @Body() dto: UpdateHomepageDto) {
+    return this.adminService.updateHomepage(tenant.store.id, dto);
+  }
+
+  @Get('homepage/sections')
+  @StoreRoles(StoreUserRole.OWNER, StoreUserRole.ADMIN, StoreUserRole.MANAGER)
+  getHomepageSections(@CurrentTenant() tenant: TenantContext) {
+    return this.adminService.getHomepageSections(tenant.store.id);
+  }
+
+  @Post('homepage/sections')
+  @StoreRoles(StoreUserRole.OWNER, StoreUserRole.ADMIN, StoreUserRole.MANAGER)
+  createHomepageSection(@CurrentTenant() tenant: TenantContext, @Body() dto: CreateHomepageSectionDto) {
+    return this.adminService.createHomepageSection(tenant.store.id, dto);
+  }
+
+  @Patch('homepage/sections/:id')
+  @StoreRoles(StoreUserRole.OWNER, StoreUserRole.ADMIN, StoreUserRole.MANAGER)
+  updateHomepageSection(
+    @CurrentTenant() tenant: TenantContext,
+    @Param('id') id: string,
+    @Body() dto: UpdateHomepageSectionDto,
+  ) {
+    return this.adminService.updateHomepageSection(tenant.store.id, id, dto);
+  }
+
+  @Delete('homepage/sections/:id')
+  @StoreRoles(StoreUserRole.OWNER, StoreUserRole.ADMIN, StoreUserRole.MANAGER)
+  deleteHomepageSection(@CurrentTenant() tenant: TenantContext, @Param('id') id: string) {
+    return this.adminService.deleteHomepageSection(tenant.store.id, id);
+  }
+
+  @Post('homepage/sections/reorder')
+  @HttpCode(HttpStatus.OK)
+  @StoreRoles(StoreUserRole.OWNER, StoreUserRole.ADMIN, StoreUserRole.MANAGER)
+  reorderHomepageSections(@CurrentTenant() tenant: TenantContext, @Body() dto: ReorderHomepageSectionsDto) {
+    return this.adminService.reorderHomepageSections(tenant.store.id, dto.sectionIds);
   }
 }

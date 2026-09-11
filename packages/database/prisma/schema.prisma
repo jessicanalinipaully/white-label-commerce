@@ -88,6 +88,9 @@ model Store {
   orders        Order[]
   payments      Payment[]
   shippingRates ShippingRate[]
+  theme         StoreTheme?
+  branding      StoreBranding?
+  homepage      StoreHomepage?
 }
 
 model StoreDomain {
@@ -126,34 +129,36 @@ model Category {
   description String?
   imageUrl    String?
   isActive    Boolean   @default(true)
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  products    Product[]
+  createdAt        DateTime               @default(now())
+  updatedAt        DateTime               @updatedAt
+  products         Product[]
+  homepageSections StoreHomepageSection[]
 
   @@unique([storeId, slug])
   @@index([storeId])
 }
 
 model Product {
-  id               String           @id @default(cuid())
+  id               String                 @id @default(cuid())
   storeId          String
-  store            Store            @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  store            Store                  @relation(fields: [storeId], references: [id], onDelete: Cascade)
   categoryId       String?
-  category         Category?        @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  category         Category?              @relation(fields: [categoryId], references: [id], onDelete: SetNull)
   name             String
   slug             String
   description      String?
   shortDescription String?
   sku              String?
-  price            Decimal          @db.Decimal(10, 2)
-  compareAtPrice   Decimal?         @db.Decimal(10, 2)
-  isActive         Boolean          @default(true)
-  createdAt        DateTime         @default(now())
-  updatedAt        DateTime         @updatedAt
+  price            Decimal                @db.Decimal(10, 2)
+  compareAtPrice   Decimal?               @db.Decimal(10, 2)
+  isActive         Boolean                @default(true)
+  createdAt        DateTime               @default(now())
+  updatedAt        DateTime               @updatedAt
   images           ProductImage[]
   variants         ProductVariant[]
   cartItems        CartItem[]
   orderItems       OrderItem[]
+  homepageSections StoreHomepageSection[]
 
   @@unique([storeId, slug])
   @@index([storeId])
@@ -372,3 +377,83 @@ model ShippingRate {
 
   @@index([storeId])
 }
+
+enum HomepageSectionType {
+  HERO
+  FEATURED_PRODUCTS
+  FEATURED_CATEGORIES
+  PROMO_BANNER
+  TEXT
+  IMAGE
+  CTA
+}
+
+model StoreTheme {
+  id              String   @id @default(cuid())
+  storeId         String   @unique
+  store           Store    @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  name            String   @default("Default Theme")
+  isActive        Boolean  @default(true)
+  primaryColor    String   @default("#4F46E5")
+  secondaryColor  String   @default("#06B6D4")
+  accentColor     String   @default("#F59E0B")
+  backgroundColor String   @default("#0F172A")
+  textColor       String   @default("#F8FAFC")
+  headingFont     String   @default("INTER")
+  bodyFont        String   @default("INTER")
+  borderRadius    String   @default("MEDIUM")
+  buttonStyle     String   @default("SOLID")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model StoreBranding {
+  id                    String   @id @default(cuid())
+  storeId               String   @unique
+  store                 Store    @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  logoUrl               String?
+  faviconUrl            String?
+  storeDisplayName      String?
+  tagline               String?
+  socialPreviewImageUrl String?
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+}
+
+model StoreHomepage {
+  id              String                 @id @default(cuid())
+  storeId         String                 @unique
+  store           Store                  @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  title           String                 @default("Home")
+  metaTitle       String?
+  metaDescription String?
+  createdAt       DateTime               @default(now())
+  updatedAt       DateTime               @updatedAt
+  sections        StoreHomepageSection[]
+}
+
+model StoreHomepageSection {
+  id         String              @id @default(cuid())
+  homepageId String
+  homepage   StoreHomepage       @relation(fields: [homepageId], references: [id], onDelete: Cascade)
+  type       HomepageSectionType
+  title      String?
+  subtitle   String?
+  content    String?
+  imageUrl   String?
+  buttonText String?
+  buttonUrl  String?
+  productId  String?
+  product    Product?            @relation(fields: [productId], references: [id], onDelete: SetNull)
+  categoryId String?
+  category   Category?           @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  sortOrder  Int                 @default(0)
+  isActive   Boolean             @default(true)
+  createdAt  DateTime            @default(now())
+  updatedAt  DateTime            @updatedAt
+
+  @@index([homepageId])
+  @@index([productId])
+  @@index([categoryId])
+}
+

@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { StoreInfo, Category } from '@/lib/api/types';
 import { useCart } from '@/context/CartContext';
 import { useWishlist } from '@/context/WishlistContext';
+import { useTheme } from '@/context/ThemeContext';
 import { SearchBar } from '../products/SearchBar';
 import { StorefrontNav } from './StorefrontNav';
 import { CartDrawer } from '../cart/CartDrawer';
@@ -15,11 +16,13 @@ interface StorefrontHeaderProps {
 }
 
 export function StorefrontHeader({ storeInfo, categories }: StorefrontHeaderProps) {
+  const { config } = useTheme();
   const { count: cartCount } = useCart();
   const { count: wishlistCount } = useWishlist();
   const [isCartOpen, setIsCartOpen] = useState(false);
 
-  const storeName = storeInfo?.name || 'White Label Store';
+  const branding = config?.branding;
+  const storeName = branding?.storeDisplayName || storeInfo?.name || 'White Label Store';
 
   return (
     <>
@@ -28,9 +31,13 @@ export function StorefrontHeader({ storeInfo, categories }: StorefrontHeaderProp
           <div className="flex items-center justify-between h-16 gap-4">
             {/* Logo / Store Name */}
             <Link href="/" className="flex items-center gap-2 font-bold text-xl text-white tracking-tight hover:opacity-90 transition-opacity">
-              <span className="bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
-                {storeName}
-              </span>
+              {branding?.logoUrl ? (
+                <img src={branding.logoUrl} alt={storeName} className="h-8 max-w-[160px] object-contain" />
+              ) : (
+                <span className="bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
+                  {storeName}
+                </span>
+              )}
             </Link>
 
             {/* Search Bar (desktop) */}

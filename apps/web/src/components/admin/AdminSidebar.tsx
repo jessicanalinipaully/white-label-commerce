@@ -5,6 +5,9 @@ import { usePathname } from 'next/navigation';
 
 const navItems = [
   { label: 'Overview', href: '/admin', icon: '📊' },
+  { label: 'Theme Styling', href: '/admin/theme', icon: '🎨' },
+  { label: 'Store Branding', href: '/admin/branding', icon: '🏷️' },
+  { label: 'Homepage CMS', href: '/admin/homepage', icon: '🖼️' },
   { label: 'Products', href: '/admin/products', icon: '🛍️' },
   { label: 'Categories', href: '/admin/categories', icon: '📁' },
   { label: 'Inventory', href: '/admin/inventory', icon: '📦' },

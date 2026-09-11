@@ -1,6 +1,6 @@
-import { UserRole, StoreStatus, StoreUserRole, CartStatus, OrderStatus, PaymentStatus, OrderPaymentStatus } from '@commerce/database';
+import { UserRole, StoreStatus, StoreUserRole, CartStatus, OrderStatus, PaymentStatus, OrderPaymentStatus, HomepageSectionType } from '@commerce/database';
 
-export { UserRole, StoreStatus, StoreUserRole, CartStatus, OrderStatus, PaymentStatus, OrderPaymentStatus };
+export { UserRole, StoreStatus, StoreUserRole, CartStatus, OrderStatus, PaymentStatus, OrderPaymentStatus, HomepageSectionType };
 
 export interface User {
   id: string;
@@ -166,3 +166,77 @@ export interface PaginatedResult<T> {
   limit: number;
   totalPages: number;
 }
+
+export interface StoreTheme {
+  id: string;
+  storeId: string;
+  name: string;
+  isActive: boolean;
+  primaryColor: string;
+  secondaryColor: string;
+  accentColor: string;
+  backgroundColor: string;
+  textColor: string;
+  headingFont: string;
+  bodyFont: string;
+  borderRadius: string;
+  buttonStyle: string;
+  createdAt: Date | string;
+  updatedAt: Date | string;
+}
+
+export interface StoreBranding {
+  id: string;
+  storeId: string;
+  logoUrl?: string | null;
+  faviconUrl?: string | null;
+  storeDisplayName?: string | null;
+  tagline?: string | null;
+  socialPreviewImageUrl?: string | null;
+  createdAt: Date | string;
+  updatedAt: Date | string;
+}
+
+export interface StoreHomepage {
+  id: string;
+  storeId: string;
+  title: string;
+  metaTitle?: string | null;
+  metaDescription?: string | null;
+  createdAt: Date | string;
+  updatedAt: Date | string;
+  sections?: StoreHomepageSection[];
+}
+
+export interface StoreHomepageSection {
+  id: string;
+  homepageId: string;
+  type: HomepageSectionType;
+  title?: string | null;
+  subtitle?: string | null;
+  content?: string | null;
+  imageUrl?: string | null;
+  buttonText?: string | null;
+  buttonUrl?: string | null;
+  productId?: string | null;
+  categoryId?: string | null;
+  sortOrder: number;
+  isActive: boolean;
+  createdAt: Date | string;
+  updatedAt: Date | string;
+  product?: Product | null;
+  category?: Category | null;
+}
+
+export interface StorefrontConfig {
+  store: {
+    id: string;
+    name: string;
+    slug: string;
+  };
+  branding: StoreBranding | null;
+  theme: StoreTheme | null;
+  homepage: StoreHomepage | null;
+  sections: StoreHomepageSection[];
+}
+

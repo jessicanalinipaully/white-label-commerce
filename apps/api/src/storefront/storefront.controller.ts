@@ -19,6 +19,12 @@ export class StorefrontController {
     return req.tenant.store.id;
   }
 
+  @Get('config')
+  getConfig(@Req() req: Request): Promise<any> {
+    const storeId = this.resolveStoreId(req);
+    return this.storefrontService.getStorefrontConfig(storeId);
+  }
+
   @Get('store')
   getStore(@Req() req: Request): Promise<any> {
     const storeId = this.resolveStoreId(req);

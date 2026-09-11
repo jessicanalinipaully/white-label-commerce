@@ -999,4 +999,307 @@ export class AdminService {
       include: { domains: true },
     });
   }
+
+  /** 10. THEME MANAGEMENT */
+  async getTheme(storeId: string): Promise<any> {
+    let theme = await this.prisma.storeTheme.findUnique({
+      where: { storeId },
+    });
+    if (!theme) {
+      theme = await this.prisma.storeTheme.create({
+        data: { storeId, name: 'Default Theme' },
+      });
+    }
+    return theme;
+  }
+
+  async updateTheme(storeId: string, dto: any): Promise<any> {
+    const headingFont = dto.headingFont || dto.fontFamilyHeading;
+    const bodyFont = dto.bodyFont || dto.fontFamilyBody;
+
+    return this.prisma.storeTheme.upsert({
+      where: { storeId },
+      create: {
+        storeId,
+        name: dto.name || 'Custom Theme',
+        primaryColor: dto.primaryColor || '#4F46E5',
+        secondaryColor: dto.secondaryColor || '#06B6D4',
+        accentColor: dto.accentColor || '#F59E0B',
+        backgroundColor: dto.backgroundColor || '#0F172A',
+        textColor: dto.textColor || '#F8FAFC',
+        headingFont: headingFont || 'INTER',
+        bodyFont: bodyFont || 'INTER',
+        borderRadius: dto.borderRadius || 'MEDIUM',
+        buttonStyle: dto.buttonStyle || 'SOLID',
+      },
+      update: {
+        name: dto.name !== undefined ? dto.name : undefined,
+        primaryColor: dto.primaryColor !== undefined ? dto.primaryColor : undefined,
+        secondaryColor: dto.secondaryColor !== undefined ? dto.secondaryColor : undefined,
+        accentColor: dto.accentColor !== undefined ? dto.accentColor : undefined,
+        backgroundColor: dto.backgroundColor !== undefined ? dto.backgroundColor : undefined,
+        textColor: dto.textColor !== undefined ? dto.textColor : undefined,
+        headingFont: headingFont !== undefined ? headingFont : undefined,
+        bodyFont: bodyFont !== undefined ? bodyFont : undefined,
+        borderRadius: dto.borderRadius !== undefined ? dto.borderRadius : undefined,
+        buttonStyle: dto.buttonStyle !== undefined ? dto.buttonStyle : undefined,
+      },
+    });
+  }
+
+  /** 11. BRANDING MANAGEMENT */
+  async getBranding(storeId: string): Promise<any> {
+    let branding = await this.prisma.storeBranding.findUnique({
+      where: { storeId },
+    });
+    if (!branding) {
+      const store = await this.prisma.store.findUnique({ where: { id: storeId } });
+      branding = await this.prisma.storeBranding.create({
+        data: { storeId, storeDisplayName: store?.name || 'Store' },
+      });
+    }
+    return branding;
+  }
+
+  async updateBranding(storeId: string, dto: any): Promise<any> {
+    const displayName = dto.storeDisplayName !== undefined ? dto.storeDisplayName : dto.displayName;
+
+    return this.prisma.storeBranding.upsert({
+      where: { storeId },
+      create: {
+        storeId,
+        logoUrl: dto.logoUrl || null,
+        faviconUrl: dto.faviconUrl || null,
+        storeDisplayName: displayName || null,
+        tagline: dto.tagline || null,
+        socialPreviewImageUrl: dto.socialPreviewImageUrl || null,
+      },
+      update: {
+        logoUrl: dto.logoUrl !== undefined ? dto.logoUrl : undefined,
+        faviconUrl: dto.faviconUrl !== undefined ? dto.faviconUrl : undefined,
+        storeDisplayName: displayName !== undefined ? displayName : undefined,
+        tagline: dto.tagline !== undefined ? dto.tagline : undefined,
+        socialPreviewImageUrl:
+          dto.socialPreviewImageUrl !== undefined ? dto.socialPreviewImageUrl : undefined,
+      },
+    });
+  }
+
+  /** 12. HOMEPAGE CMS */
+  async getHomepage(storeId: string): Promise<any> {
+    let homepage = await this.prisma.storeHomepage.findUnique({
+      where: { storeId },
+      include: {
+        sections: {
+          orderBy: { sortOrder: 'asc' },
+          include: {
+            product: true,
+            category: true,
+          },
+        },
+      },
+    });
+
+    if (!homepage) {
+      homepage = await this.prisma.storeHomepage.create({
+        data: { storeId, title: 'Home' },
+        include: {
+          sections: {
+            orderBy: { sortOrder: 'asc' },
+            include: { product: true, category: true },
+          },
+        },
+      });
+    }
+
+    return homepage;
+  }
+
+  async updateHomepage(storeId: string, dto: any): Promise<any> {
+    return this.prisma.storeHomepage.upsert({
+      where: { storeId },
+      create: {
+        storeId,
+        title: dto.title || 'Home',
+        metaTitle: dto.metaTitle || null,
+        metaDescription: dto.metaDescription || null,
+      },
+      update: {
+        title: dto.title,
+        metaTitle: dto.metaTitle,
+        metaDescription: dto.metaDescription,
+      },
+      include: {
+        sections: { orderBy: { sortOrder: 'asc' } },
+      },
+    });
+  }
+
+  async getHomepageSections(storeId: string): Promise<any> {
+    const homepage = await this.getHomepage(storeId);
+    return homepage.sections;
+  }
+
+  async createHomepageSection(storeId: string, dto: any): Promise<any> {
+    const homepage = await this.getHomepage(storeId);
+
+    const productIdsToCheck: string[] = [];
+    if (dto.productId) productIdsToCheck.push(dto.productId);
+    if (dto.config?.productIds && Array.isArray(dto.config.productIds)) {
+      productIdsToCheck.push(...dto.config.productIds);
+    }
+    if (productIdsToCheck.length > 0) {
+      const validCount = await this.prisma.product.count({
+        where: { id: { in: productIdsToCheck }, storeId },
+      });
+      if (validCount !== productIdsToCheck.length) {
+        throw new BadRequestException('Referenced product does not belong to current store');
+      }
+    }
+
+    const categoryIdsToCheck: string[] = [];
+    if (dto.categoryId) categoryIdsToCheck.push(dto.categoryId);
+    if (dto.config?.categoryIds && Array.isArray(dto.config.categoryIds)) {
+      categoryIdsToCheck.push(...dto.config.categoryIds);
+    }
+    if (categoryIdsToCheck.length > 0) {
+      const validCount = await this.prisma.category.count({
+        where: { id: { in: categoryIdsToCheck }, storeId },
+      });
+      if (validCount !== categoryIdsToCheck.length) {
+        throw new BadRequestException('Referenced category does not belong to current store');
+      }
+    }
+
+    const maxSort = await this.prisma.storeHomepageSection.aggregate({
+      where: { homepageId: homepage.id },
+      _max: { sortOrder: true },
+    });
+    const nextSortOrder = (maxSort._max.sortOrder ?? 0) + 1;
+
+    const targetProductId = dto.productId || (dto.config?.productIds && dto.config.productIds[0]) || null;
+    const targetCategoryId = dto.categoryId || (dto.config?.categoryIds && dto.config.categoryIds[0]) || null;
+
+    return this.prisma.storeHomepageSection.create({
+      data: {
+        homepageId: homepage.id,
+        type: dto.type,
+        title: dto.title || null,
+        subtitle: dto.subtitle || null,
+        content: dto.content || null,
+        imageUrl: dto.imageUrl || null,
+        buttonText: dto.buttonText || null,
+        buttonUrl: dto.buttonUrl || dto.buttonLink || null,
+        productId: targetProductId,
+        categoryId: targetCategoryId,
+        sortOrder: dto.sortOrder !== undefined ? dto.sortOrder : nextSortOrder,
+        isActive: dto.isActive !== undefined ? dto.isActive : true,
+      },
+      include: { product: true, category: true },
+    });
+  }
+
+  async updateHomepageSection(storeId: string, id: string, dto: any): Promise<any> {
+    const homepage = await this.getHomepage(storeId);
+    const existing = await this.prisma.storeHomepageSection.findFirst({
+      where: { id, homepageId: homepage.id },
+    });
+
+    if (!existing) {
+      throw new NotFoundException('Homepage section not found in current store');
+    }
+
+    const productIdsToCheck: string[] = [];
+    if (dto.productId) productIdsToCheck.push(dto.productId);
+    if (dto.config?.productIds && Array.isArray(dto.config.productIds)) {
+      productIdsToCheck.push(...dto.config.productIds);
+    }
+    if (productIdsToCheck.length > 0) {
+      const validCount = await this.prisma.product.count({
+        where: { id: { in: productIdsToCheck }, storeId },
+      });
+      if (validCount !== productIdsToCheck.length) {
+        throw new BadRequestException('Referenced product does not belong to current store');
+      }
+    }
+
+    const categoryIdsToCheck: string[] = [];
+    if (dto.categoryId) categoryIdsToCheck.push(dto.categoryId);
+    if (dto.config?.categoryIds && Array.isArray(dto.config.categoryIds)) {
+      categoryIdsToCheck.push(...dto.config.categoryIds);
+    }
+    if (categoryIdsToCheck.length > 0) {
+      const validCount = await this.prisma.category.count({
+        where: { id: { in: categoryIdsToCheck }, storeId },
+      });
+      if (validCount !== categoryIdsToCheck.length) {
+        throw new BadRequestException('Referenced category does not belong to current store');
+      }
+    }
+
+    const targetProductId = dto.productId !== undefined 
+      ? dto.productId 
+      : (dto.config?.productIds ? dto.config.productIds[0] : existing.productId);
+
+    const targetCategoryId = dto.categoryId !== undefined 
+      ? dto.categoryId 
+      : (dto.config?.categoryIds ? dto.config.categoryIds[0] : existing.categoryId);
+
+    return this.prisma.storeHomepageSection.update({
+      where: { id },
+      data: {
+        type: dto.type ?? existing.type,
+        title: dto.title !== undefined ? dto.title : existing.title,
+        subtitle: dto.subtitle !== undefined ? dto.subtitle : existing.subtitle,
+        content: dto.content !== undefined ? dto.content : existing.content,
+        imageUrl: dto.imageUrl !== undefined ? dto.imageUrl : existing.imageUrl,
+        buttonText: dto.buttonText !== undefined ? dto.buttonText : existing.buttonText,
+        buttonUrl: dto.buttonUrl !== undefined ? dto.buttonUrl : (dto.buttonLink !== undefined ? dto.buttonLink : existing.buttonUrl),
+        productId: targetProductId,
+        categoryId: targetCategoryId,
+        sortOrder: dto.sortOrder !== undefined ? dto.sortOrder : existing.sortOrder,
+        isActive: dto.isActive !== undefined ? dto.isActive : existing.isActive,
+      },
+      include: { product: true, category: true },
+    });
+  }
+
+  async deleteHomepageSection(storeId: string, id: string): Promise<any> {
+    const homepage = await this.getHomepage(storeId);
+    const existing = await this.prisma.storeHomepageSection.findFirst({
+      where: { id, homepageId: homepage.id },
+    });
+
+    if (!existing) {
+      throw new NotFoundException('Homepage section not found in current store');
+    }
+
+    return this.prisma.storeHomepageSection.delete({
+      where: { id },
+    });
+  }
+
+  async reorderHomepageSections(storeId: string, sectionIds: string[]): Promise<any> {
+    const homepage = await this.getHomepage(storeId);
+
+    // Validate that all sections belong to this homepage
+    const sections = await this.prisma.storeHomepageSection.findMany({
+      where: { homepageId: homepage.id, id: { in: sectionIds } },
+    });
+
+    if (sections.length !== sectionIds.length) {
+      throw new BadRequestException('One or more section IDs do not belong to current store');
+    }
+
+    await this.prisma.$transaction(
+      sectionIds.map((secId, idx) =>
+        this.prisma.storeHomepageSection.update({
+          where: { id: secId },
+          data: { sortOrder: idx },
+        }),
+      ),
+    );
+
+    return this.getHomepageSections(storeId);
+  }
 }

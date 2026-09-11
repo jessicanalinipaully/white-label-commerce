@@ -281,3 +281,86 @@ export async function updateAdminStore(token: string, data: { name?: string; slu
     body: JSON.stringify(data),
   });
 }
+
+/** Theme */
+export async function fetchAdminTheme(token: string, host?: string) {
+  return request(`${API_BASE}/admin/theme`, {
+    headers: getHeaders(token, host),
+  });
+}
+
+export async function updateAdminTheme(token: string, data: any, host?: string) {
+  return request(`${API_BASE}/admin/theme`, {
+    method: 'PATCH',
+    headers: getHeaders(token, host),
+    body: JSON.stringify(data),
+  });
+}
+
+/** Branding */
+export async function fetchAdminBranding(token: string, host?: string) {
+  return request(`${API_BASE}/admin/branding`, {
+    headers: getHeaders(token, host),
+  });
+}
+
+export async function updateAdminBranding(token: string, data: any, host?: string) {
+  return request(`${API_BASE}/admin/branding`, {
+    method: 'PATCH',
+    headers: getHeaders(token, host),
+    body: JSON.stringify(data),
+  });
+}
+
+/** Homepage CMS */
+export async function fetchAdminHomepage(token: string, host?: string) {
+  return request(`${API_BASE}/admin/homepage`, {
+    headers: getHeaders(token, host),
+  });
+}
+
+export async function updateAdminHomepage(token: string, data: any, host?: string) {
+  return request(`${API_BASE}/admin/homepage`, {
+    method: 'PATCH',
+    headers: getHeaders(token, host),
+    body: JSON.stringify(data),
+  });
+}
+
+export async function fetchAdminHomepageSections(token: string, host?: string) {
+  return request(`${API_BASE}/admin/homepage/sections`, {
+    headers: getHeaders(token, host),
+  });
+}
+
+export async function createAdminHomepageSection(token: string, data: any, host?: string) {
+  return request(`${API_BASE}/admin/homepage/sections`, {
+    method: 'POST',
+    headers: getHeaders(token, host),
+    body: JSON.stringify(data),
+  });
+}
+
+export async function updateAdminHomepageSection(token: string, id: string, data: any, host?: string) {
+  return request(`${API_BASE}/admin/homepage/sections/${id}`, {
+    method: 'PATCH',
+    headers: getHeaders(token, host),
+    body: JSON.stringify(data),
+  });
+}
+
+export async function deleteAdminHomepageSection(token: string, id: string, host?: string) {
+  return request(`${API_BASE}/admin/homepage/sections/${id}`, {
+    method: 'DELETE',
+    headers: getHeaders(token, host),
+  });
+}
+
+export async function reorderAdminHomepageSections(token: string, sectionIds: string[], host?: string) {
+  return request(`${API_BASE}/admin/homepage/sections/reorder`, {
+    method: 'POST',
+    headers: getHeaders(token, host),
+    body: JSON.stringify({ sectionIds }),
+  });
+}
+
