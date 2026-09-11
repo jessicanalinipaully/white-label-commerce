@@ -53,20 +53,54 @@ export class ProductService {
     });
   }
 
-  async findAllProducts(storeId: string, page = 1, limit = 20): Promise<PaginatedResult<any>> {
+  async findAllProducts(
+    storeId: string,
+    page = 1,
+    limit = 20,
+    search?: string,
+    categoryId?: string,
+    activeOnly?: boolean | string,
+    sortBy?: string,
+    sortOrder: 'asc' | 'desc' = 'desc',
+  ): Promise<PaginatedResult<any>> {
     const pageNum = Math.max(1, Number(page) || 1);
     const limitNum = Math.min(100, Math.max(1, Number(limit) || 20));
     const skip = (pageNum - 1) * limitNum;
 
+    const where: any = { storeId };
+
+    if (search) {
+      where.OR = [
+        { name: { contains: search, mode: 'insensitive' } },
+        { sku: { contains: search, mode: 'insensitive' } },
+        { description: { contains: search, mode: 'insensitive' } },
+      ];
+    }
+
+    if (categoryId) {
+      where.categoryId = categoryId;
+    }
+
+    if (activeOnly !== undefined && activeOnly !== null) {
+      where.isActive = activeOnly === true || activeOnly === 'true';
+    }
+
+    const orderBy: any = {};
+    if (sortBy) {
+      orderBy[sortBy] = sortOrder || 'desc';
+    } else {
+      orderBy.createdAt = 'desc';
+    }
+
     const [data, total] = await Promise.all([
       this.prisma.product.findMany({
-        where: { storeId },
+        where,
         skip,
         take: limitNum,
-        orderBy: { createdAt: 'desc' },
+        orderBy,
         include: { category: true, images: { orderBy: { sortOrder: 'asc' } }, variants: true },
       }),
-      this.prisma.product.count({ where: { storeId } }),
+      this.prisma.product.count({ where }),
     ]);
 
     return {
@@ -81,6 +115,23 @@ export class ProductService {
   async findOneProduct(storeId: string, id: string): Promise<any> {
     const product = await this.prisma.product.findFirst({
       where: { id, storeId },
+      include: {
+        category: true,
+        images: { orderBy: { sortOrder: 'asc' } },
+        variants: { include: { inventory: true } },
+      },
+    });
+
+    if (!product) {
+      throw new NotFoundException('Product not found');
+    }
+
+    return product;
+  }
+
+  async findProductBySlug(storeId: string, slug: string): Promise<any> {
+    const product = await this.prisma.product.findUnique({
+      where: { storeId_slug: { storeId, slug: slug.toLowerCase().trim() } },
       include: {
         category: true,
         images: { orderBy: { sortOrder: 'asc' } },

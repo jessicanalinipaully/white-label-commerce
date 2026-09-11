@@ -50,8 +50,13 @@ export class ProductController {
     @CurrentTenant() tenant: TenantContext,
     @Query('page') page?: number,
     @Query('limit') limit?: number,
+    @Query('q') q?: string,
+    @Query('categoryId') categoryId?: string,
+    @Query('active') active?: string,
+    @Query('sortBy') sortBy?: string,
+    @Query('sortOrder') sortOrder?: 'asc' | 'desc',
   ): Promise<PaginatedResult<any>> {
-    return this.productService.findAllProducts(tenant.store.id, page, limit);
+    return this.productService.findAllProducts(tenant.store.id, page, limit, q, categoryId, active, sortBy, sortOrder);
   }
 
   @Get(':id')
