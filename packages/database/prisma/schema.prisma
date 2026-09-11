@@ -12,13 +12,66 @@ enum UserRole {
   ADMIN
 }
 
+enum StoreStatus {
+  ACTIVE
+  SUSPENDED
+  TRIAL
+}
+
+enum StoreUserRole {
+  OWNER
+  ADMIN
+  MANAGER
+  INVENTORY_MANAGER
+  SUPPORT_AGENT
+}
+
 model User {
-  id           String   @id @default(cuid())
-  email        String   @unique
+  id           String      @id @default(cuid())
+  email        String      @unique
   passwordHash String
   firstName    String?
   lastName     String?
-  role         UserRole @default(USER)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  role         UserRole    @default(USER)
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  storeUsers   StoreUser[]
+}
+
+model Store {
+  id        String        @id @default(cuid())
+  name      String
+  slug      String        @unique
+  status    StoreStatus   @default(ACTIVE)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  domains   StoreDomain[]
+  users     StoreUser[]
+}
+
+model StoreDomain {
+  id        String   @id @default(cuid())
+  storeId   String
+  store     Store    @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  domain    String   @unique
+  isPrimary Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([storeId])
+}
+
+model StoreUser {
+  id        String        @id @default(cuid())
+  storeId   String
+  store     Store         @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role      StoreUserRole @default(OWNER)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  @@unique([storeId, userId])
+  @@index([storeId])
+  @@index([userId])
 }

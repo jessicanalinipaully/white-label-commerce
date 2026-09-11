@@ -10,14 +10,22 @@
     "dev": "tsc --watch",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev --name init",
+    "db:seed": "prisma db seed",
     "db:studio": "prisma studio"
+  },
+  "prisma": {
+    "seed": "ts-node prisma/seed.ts"
   },
   "dependencies": {
     "@prisma/client": "^5.14.0"
   },
   "devDependencies": {
     "@commerce/config": "workspace:*",
+    "@types/bcrypt": "^5.0.2",
+    "@types/node": "^20.12.12",
+    "bcrypt": "^5.1.1",
     "prisma": "^5.14.0",
+    "ts-node": "^10.9.2",
     "typescript": "^5.4.5"
   }
 }
