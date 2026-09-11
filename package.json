@@ -1,0 +1,22 @@
+{
+  "name": "white-label-commerce",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "pnpm --parallel --filter \"@commerce/*\" dev",
+    "build": "pnpm --filter \"@commerce/*\" build",
+    "lint": "pnpm --filter \"@commerce/*\" lint",
+    "db:generate": "pnpm --filter @commerce/database db:generate",
+    "db:migrate": "pnpm --filter @commerce/database db:migrate",
+    "db:studio": "pnpm --filter @commerce/database db:studio",
+    "docker:up": "docker compose up -d",
+    "docker:down": "docker compose down"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.5"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  }
+}
