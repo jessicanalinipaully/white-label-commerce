@@ -6,6 +6,9 @@ import { HealthModule } from './health/health.module';
 import { AuthModule } from './auth/auth.module';
 import { StoreModule } from './store/store.module';
 import { TenantModule } from './tenant/tenant.module';
+import { CategoryModule } from './category/category.module';
+import { ProductModule } from './product/product.module';
+import { InventoryModule } from './inventory/inventory.module';
 import { TenantMiddleware } from './tenant/tenant.middleware';
 
 @Module({
@@ -20,6 +23,9 @@ import { TenantMiddleware } from './tenant/tenant.middleware';
     AuthModule,
     StoreModule,
     TenantModule,
+    CategoryModule,
+    ProductModule,
+    InventoryModule,
   ],
 })
 export class AppModule implements NestModule {

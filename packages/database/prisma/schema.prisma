@@ -39,14 +39,18 @@ model User {
 }
 
 model Store {
-  id        String        @id @default(cuid())
-  name      String
-  slug      String        @unique
-  status    StoreStatus   @default(ACTIVE)
-  createdAt DateTime      @default(now())
-  updatedAt DateTime      @updatedAt
-  domains   StoreDomain[]
-  users     StoreUser[]
+  id          String           @id @default(cuid())
+  name        String
+  slug        String           @unique
+  status      StoreStatus      @default(ACTIVE)
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  domains     StoreDomain[]
+  users       StoreUser[]
+  categories  Category[]
+  products    Product[]
+  variants    ProductVariant[]
+  inventories Inventory[]
 }
 
 model StoreDomain {
@@ -74,4 +78,93 @@ model StoreUser {
   @@unique([storeId, userId])
   @@index([storeId])
   @@index([userId])
+}
+
+model Category {
+  id          String    @id @default(cuid())
+  storeId     String
+  store       Store     @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  name        String
+  slug        String
+  description String?
+  imageUrl    String?
+  isActive    Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  products    Product[]
+
+  @@unique([storeId, slug])
+  @@index([storeId])
+}
+
+model Product {
+  id               String           @id @default(cuid())
+  storeId          String
+  store            Store            @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  categoryId       String?
+  category         Category?        @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  name             String
+  slug             String
+  description      String?
+  shortDescription String?
+  sku              String?
+  price            Decimal          @db.Decimal(10, 2)
+  compareAtPrice   Decimal?         @db.Decimal(10, 2)
+  isActive         Boolean          @default(true)
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+  images           ProductImage[]
+  variants         ProductVariant[]
+
+  @@unique([storeId, slug])
+  @@index([storeId])
+  @@index([categoryId])
+}
+
+model ProductImage {
+  id        String   @id @default(cuid())
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  url       String
+  altText   String?
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([productId])
+}
+
+model ProductVariant {
+  id        String     @id @default(cuid())
+  storeId   String
+  store     Store      @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product    @relation(fields: [productId], references: [id], onDelete: Cascade)
+  name      String
+  sku       String
+  price     Decimal?   @db.Decimal(10, 2)
+  attributes Json
+  isActive  Boolean    @default(true)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  inventory Inventory?
+
+  @@unique([storeId, sku])
+  @@index([storeId])
+  @@index([productId])
+}
+
+model Inventory {
+  id                String         @id @default(cuid())
+  storeId           String
+  store             Store          @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  variantId         String         @unique
+  variant           ProductVariant @relation(fields: [variantId], references: [id], onDelete: Cascade)
+  quantity          Int            @default(0)
+  reservedQuantity  Int            @default(0)
+  lowStockThreshold Int            @default(5)
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+
+  @@index([storeId])
 }

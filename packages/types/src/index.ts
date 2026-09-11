@@ -49,6 +49,72 @@ export interface TenantContext {
   membership?: StoreUser | null;
 }
 
+export interface Category {
+  id: string;
+  storeId: string;
+  name: string;
+  slug: string;
+  description?: string | null;
+  imageUrl?: string | null;
+  isActive: boolean;
+  createdAt: Date | string;
+  updatedAt: Date | string;
+}
+
+export interface ProductImage {
+  id: string;
+  productId: string;
+  url: string;
+  altText?: string | null;
+  sortOrder: number;
+  createdAt: Date | string;
+  updatedAt: Date | string;
+}
+
+export interface ProductVariant {
+  id: string;
+  storeId: string;
+  productId: string;
+  name: string;
+  sku: string;
+  price?: number | string | null;
+  attributes: Record<string, any>;
+  isActive: boolean;
+  createdAt: Date | string;
+  updatedAt: Date | string;
+  inventory?: Inventory | null;
+}
+
+export interface Product {
+  id: string;
+  storeId: string;
+  categoryId?: string | null;
+  name: string;
+  slug: string;
+  description?: string | null;
+  shortDescription?: string | null;
+  sku?: string | null;
+  price: number | string;
+  compareAtPrice?: number | string | null;
+  isActive: boolean;
+  createdAt: Date | string;
+  updatedAt: Date | string;
+  category?: Category | null;
+  images?: ProductImage[];
+  variants?: ProductVariant[];
+}
+
+export interface Inventory {
+  id: string;
+  storeId: string;
+  variantId: string;
+  quantity: number;
+  reservedQuantity: number;
+  lowStockThreshold: number;
+  createdAt: Date | string;
+  updatedAt: Date | string;
+}
+
 export interface RegisterDto {
   email: string;
   password: string;
@@ -86,4 +152,17 @@ export interface HealthResponse {
   status: string;
   service: string;
   timestamp: string;
+}
+
+export interface PaginationQuery {
+  page?: number;
+  limit?: number;
+}
+
+export interface PaginatedResult<T> {
+  data: T[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
 }
