@@ -1,14 +1,12 @@
 import { Controller, Get } from '@nestjs/common';
-import { HealthResponse } from '@commerce/types';
+import { HealthService } from './health.service';
 
 @Controller('health')
 export class HealthController {
+  constructor(private readonly healthService: HealthService) {}
+
   @Get()
-  getHealth(): HealthResponse {
-    return {
-      status: 'ok',
-      service: 'commerce-api',
-      timestamp: new Date().toISOString(),
-    };
+  async getHealth() {
+    return this.healthService.checkHealth();
   }
 }

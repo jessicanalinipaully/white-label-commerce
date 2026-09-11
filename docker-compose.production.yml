@@ -1,0 +1,97 @@
+version: '3.8'
+
+networks:
+  commerce_network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: commerce_prod_postgres
+    restart: always
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-commerce_prod}
+      POSTGRES_USER: ${POSTGRES_USER:-commerce_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-commerce_password}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - commerce_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER:-commerce_user} -d $${POSTGRES_DB:-commerce_prod}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: commerce_prod_redis
+    restart: always
+    volumes:
+      - redis_data:/data
+    networks:
+      - commerce_network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    container_name: commerce_prod_api
+    restart: always
+    environment:
+      NODE_ENV: production
+      PORT: 4000
+      API_PORT: 4000
+      DATABASE_URL: ${DATABASE_URL:-postgresql://commerce_user:commerce_password@postgres:5432/commerce_prod?schema=public}
+      REDIS_URL: ${REDIS_URL:-redis://redis:6379}
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-7d}
+      WEB_URL: ${WEB_URL}
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
+      CORS_ORIGIN: ${CORS_ORIGIN}
+      RAZORPAY_KEY_ID: ${RAZORPAY_KEY_ID}
+      RAZORPAY_KEY_SECRET: ${RAZORPAY_KEY_SECRET}
+      RAZORPAY_WEBHOOK_SECRET: ${RAZORPAY_WEBHOOK_SECRET}
+    ports:
+      - "127.0.0.1:4000:4000"
+    networks:
+      - commerce_network
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:4000/api/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    container_name: commerce_prod_web
+    restart: always
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
+    ports:
+      - "127.0.0.1:3000:3000"
+    networks:
+      - commerce_network
+    depends_on:
+      api:
+        condition: service_healthy
