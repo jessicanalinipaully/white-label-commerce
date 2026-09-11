@@ -62,12 +62,12 @@ export default function CartPage() {
             </div>
           </div>
 
-          <button
-            onClick={() => alert('Phase 4 Storefront is view-only. Checkout is out of scope per spec.')}
-            className="w-full py-4 rounded-xl bg-indigo-600 hover:bg-indigo-500 font-bold text-white transition-all shadow-lg shadow-indigo-600/30 text-center"
+          <Link
+            href="/checkout"
+            className="block w-full py-4 rounded-xl bg-indigo-600 hover:bg-indigo-500 font-bold text-white transition-all shadow-lg shadow-indigo-600/30 text-center"
           >
             Proceed to Checkout →
-          </button>
+          </Link>
 
           <p className="text-xs text-center text-slate-500">
             🔒 Secure multi-tenant local cart state

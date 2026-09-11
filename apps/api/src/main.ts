@@ -57,14 +57,28 @@ async function bootstrap() {
     }),
   );
 
-  // Configure CORS dynamically from environment
-  const corsOrigins = process.env.CORS_ORIGIN
-    ? process.env.CORS_ORIGIN.split(',').map((o) => o.trim()).filter(Boolean)
-    : [process.env.WEB_URL || 'http://localhost:3000', 'http://localhost:3000'];
-
+  // Configure CORS dynamically to support multi-tenant subdomains (e.g. urbanthread.localhost:3000, aurelia.localhost:3000)
   app.enableCors({
-    origin: corsOrigins.length === 1 ? corsOrigins[0] : corsOrigins,
+    origin: (origin, callback) => {
+      if (!origin) return callback(null, true);
+
+      const configuredOrigins = process.env.CORS_ORIGIN
+        ? process.env.CORS_ORIGIN.split(',').map((o) => o.trim()).filter(Boolean)
+        : [];
+
+      if (
+        origin === 'http://localhost:3000' ||
+        origin.endsWith('.localhost:3000') ||
+        configuredOrigins.includes(origin) ||
+        configuredOrigins.includes('*')
+      ) {
+        return callback(null, true);
+      }
+
+      callback(null, false);
+    },
     credentials: true,
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Forwarded-Host', 'X-Requested-With'],
   });
 
   const port = process.env.API_PORT || process.env.PORT || 4000;
