@@ -38,8 +38,17 @@ export function StorefrontHeader({ storeInfo, categories }: StorefrontHeaderProp
               <SearchBar />
             </div>
 
-            {/* Actions: Wishlist & Cart */}
+            {/* Actions: Account, Wishlist & Cart */}
             <div className="flex items-center gap-3">
+              <Link
+                href="/account"
+                className="p-2 text-slate-300 hover:text-indigo-400 hover:bg-slate-900 rounded-xl transition-colors text-sm font-semibold flex items-center gap-1"
+                aria-label="Customer Account"
+              >
+                <span>👤</span>
+                <span className="hidden sm:inline">Account</span>
+              </Link>
+
               <Link
                 href="/wishlist"
                 className="relative p-2 text-slate-300 hover:text-rose-400 hover:bg-slate-900 rounded-xl transition-colors"

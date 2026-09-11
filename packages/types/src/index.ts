@@ -1,6 +1,6 @@
-import { UserRole, StoreStatus, StoreUserRole } from '@commerce/database';
+import { UserRole, StoreStatus, StoreUserRole, CartStatus, OrderStatus, PaymentStatus } from '@commerce/database';
 
-export { UserRole, StoreStatus, StoreUserRole };
+export { UserRole, StoreStatus, StoreUserRole, CartStatus, OrderStatus, PaymentStatus };
 
 export interface User {
   id: string;

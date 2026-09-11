@@ -10,6 +10,9 @@ import { CategoryModule } from './category/category.module';
 import { ProductModule } from './product/product.module';
 import { InventoryModule } from './inventory/inventory.module';
 import { StorefrontModule } from './storefront/storefront.module';
+import { CustomerModule } from './customer/customer.module';
+import { CartModule } from './cart/cart.module';
+import { OrderModule } from './order/order.module';
 import { TenantMiddleware } from './tenant/tenant.middleware';
 
 @Module({
@@ -28,6 +31,9 @@ import { TenantMiddleware } from './tenant/tenant.middleware';
     ProductModule,
     InventoryModule,
     StorefrontModule,
+    CustomerModule,
+    CartModule,
+    OrderModule,
   ],
 })
 export class AppModule implements NestModule {
