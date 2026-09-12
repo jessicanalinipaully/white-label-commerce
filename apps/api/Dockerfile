@@ -35,7 +35,7 @@ ENV PORT=4000
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/packages ./packages
 COPY --from=builder /app/apps/api/dist ./apps/api/dist
-COPY --from=builder /app/apps/api/package.json ./apps/api/package.json
+USER node
 
 EXPOSE 4000
 
