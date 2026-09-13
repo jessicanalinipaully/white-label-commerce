@@ -76,7 +76,7 @@ export default function AdminLoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center p-4 text-slate-100 font-sans">
+    <div className="admin-scope min-h-screen bg-slate-950 flex flex-col items-center justify-center p-4 text-slate-100 font-sans">
       <div className="w-full max-w-md space-y-8">
         {/* Header Branding */}
         <div className="text-center space-y-2">

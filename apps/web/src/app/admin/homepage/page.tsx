@@ -259,7 +259,7 @@ export default function AdminHomepageCMSPage() {
               value={pageTitle}
               onChange={(e) => setPageTitle(e.target.value)}
               placeholder="e.g. Home - Luxury Fashion Store"
-              className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-black"
+              className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-black bg-white text-gray-900 placeholder-gray-500"
             />
           </div>
           <div>
@@ -269,7 +269,7 @@ export default function AdminHomepageCMSPage() {
               value={metaTitle}
               onChange={(e) => setMetaTitle(e.target.value)}
               placeholder="e.g. Trendy Clothing & Fashion | Luxury Store"
-              className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-black"
+              className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-black bg-white text-gray-900 placeholder-gray-500"
             />
           </div>
           <div>
@@ -279,7 +279,7 @@ export default function AdminHomepageCMSPage() {
               onChange={(e) => setMetaDescription(e.target.value)}
               rows={3}
               placeholder="e.g. Discover high quality apparel, footwear, and accessories."
-              className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-black"
+              className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-black bg-white text-gray-900 placeholder-gray-500"
             />
           </div>
           <div className="pt-2">
@@ -400,15 +400,15 @@ export default function AdminHomepageCMSPage() {
                 <select
                   value={formType}
                   onChange={(e) => setFormType(e.target.value as SectionType)}
-                  className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white text-gray-900"
                 >
-                  <option value="HERO">Hero Banner (HERO)</option>
-                  <option value="FEATURED_PRODUCTS">Featured Products (FEATURED_PRODUCTS)</option>
-                  <option value="FEATURED_CATEGORIES">Featured Categories (FEATURED_CATEGORIES)</option>
-                  <option value="PROMO_BANNER">Promo Banner (PROMO_BANNER)</option>
-                  <option value="TEXT">Rich Text / Notice (TEXT)</option>
-                  <option value="IMAGE">Image Block (IMAGE)</option>
-                  <option value="CTA">Call to Action (CTA)</option>
+                  <option value="HERO" className="bg-white text-gray-900">Hero Banner (HERO)</option>
+                  <option value="FEATURED_PRODUCTS" className="bg-white text-gray-900">Featured Products (FEATURED_PRODUCTS)</option>
+                  <option value="FEATURED_CATEGORIES" className="bg-white text-gray-900">Featured Categories (FEATURED_CATEGORIES)</option>
+                  <option value="PROMO_BANNER" className="bg-white text-gray-900">Promo Banner (PROMO_BANNER)</option>
+                  <option value="TEXT" className="bg-white text-gray-900">Rich Text / Notice (TEXT)</option>
+                  <option value="IMAGE" className="bg-white text-gray-900">Image Block (IMAGE)</option>
+                  <option value="CTA" className="bg-white text-gray-900">Call to Action (CTA)</option>
                 </select>
               </div>
 
@@ -419,7 +419,7 @@ export default function AdminHomepageCMSPage() {
                   value={formTitle}
                   onChange={(e) => setFormTitle(e.target.value)}
                   placeholder="e.g. New Summer Collection"
-                  className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white text-gray-900 placeholder-gray-500"
                 />
               </div>
 
@@ -430,7 +430,7 @@ export default function AdminHomepageCMSPage() {
                   value={formSubtitle}
                   onChange={(e) => setFormSubtitle(e.target.value)}
                   placeholder="e.g. Discover our latest arrivals with up to 30% off"
-                  className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white text-gray-900 placeholder-gray-500"
                 />
               </div>
 
@@ -442,7 +442,7 @@ export default function AdminHomepageCMSPage() {
                     value={formImageUrl}
                     onChange={(e) => setFormImageUrl(e.target.value)}
                     placeholder="https://example.com/banner.jpg"
-                    className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white text-gray-900 placeholder-gray-500"
                   />
                   <p className="text-xs text-gray-500 mt-1">Must start with http://, https://, or /</p>
                 </div>
@@ -457,7 +457,7 @@ export default function AdminHomepageCMSPage() {
                       value={formButtonText}
                       onChange={(e) => setFormButtonText(e.target.value)}
                       placeholder="e.g. Shop Now"
-                      className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                      className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white text-gray-900 placeholder-gray-500"
                     />
                   </div>
                   <div>
@@ -467,7 +467,7 @@ export default function AdminHomepageCMSPage() {
                       value={formButtonLink}
                       onChange={(e) => setFormButtonLink(e.target.value)}
                       placeholder="e.g. /products"
-                      className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                      className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white text-gray-900 placeholder-gray-500"
                     />
                   </div>
                 </div>
@@ -481,7 +481,7 @@ export default function AdminHomepageCMSPage() {
                     onChange={(e) => setFormContent(e.target.value)}
                     rows={4}
                     placeholder="Enter main text content..."
-                    className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white text-gray-900 placeholder-gray-500"
                   />
                 </div>
               )}
@@ -495,7 +495,7 @@ export default function AdminHomepageCMSPage() {
                       type="number"
                       value={formLimit}
                       onChange={(e) => setFormLimit(Number(e.target.value))}
-                      className="w-full border border-gray-300 rounded-md px-3 py-1.5 text-sm"
+                      className="w-full border border-gray-300 rounded-md px-3 py-1.5 text-sm bg-white text-gray-900 placeholder-gray-500"
                     />
                   </div>
 
@@ -509,7 +509,7 @@ export default function AdminHomepageCMSPage() {
                         value={formProductIds}
                         onChange={(e) => setFormProductIds(e.target.value)}
                         placeholder="prod_123, prod_456"
-                        className="w-full border border-gray-300 rounded-md px-3 py-1.5 text-sm"
+                        className="w-full border border-gray-300 rounded-md px-3 py-1.5 text-sm bg-white text-gray-900 placeholder-gray-500"
                       />
                     </div>
                   )}
@@ -524,7 +524,7 @@ export default function AdminHomepageCMSPage() {
                         value={formCategoryIds}
                         onChange={(e) => setFormCategoryIds(e.target.value)}
                         placeholder="cat_123, cat_456"
-                        className="w-full border border-gray-300 rounded-md px-3 py-1.5 text-sm"
+                        className="w-full border border-gray-300 rounded-md px-3 py-1.5 text-sm bg-white text-gray-900 placeholder-gray-500"
                       />
                     </div>
                   )}
@@ -537,9 +537,9 @@ export default function AdminHomepageCMSPage() {
                   id="formIsActive"
                   checked={formIsActive}
                   onChange={(e) => setFormIsActive(e.target.checked)}
-                  className="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 h-4 w-4"
+                  className="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 h-4 w-4 bg-white"
                 />
-                <label htmlFor="formIsActive" className="text-sm font-medium text-gray-700">
+                <label htmlFor="formIsActive" className="text-sm font-medium text-gray-700 cursor-pointer">
                   Section is Active (Visible on Storefront)
                 </label>
               </div>
@@ -548,7 +548,7 @@ export default function AdminHomepageCMSPage() {
                 <button
                   type="button"
                   onClick={() => setIsCreating(false)}
-                  className="px-4 py-2 border border-gray-300 text-gray-700 text-sm rounded-md hover:bg-gray-50"
+                  className="px-4 py-2 border border-gray-300 text-gray-700 text-sm font-medium rounded-md hover:bg-gray-50"
                 >
                   Cancel
                 </button>

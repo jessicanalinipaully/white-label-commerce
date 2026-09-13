@@ -202,7 +202,9 @@ describe('Phase 10: Security, Hardening & Concurrency (E2E)', () => {
       await prisma.storeUser.deleteMany({ where: { storeId: { in: [storeA.id, storeB.id] } } });
       await prisma.storeDomain.deleteMany({ where: { storeId: { in: [storeA.id, storeB.id] } } });
       await prisma.store.deleteMany({ where: { id: { in: [storeA.id, storeB.id] } } });
-      await prisma.$disconnect();
+    }
+    if (app) {
+      await app.close();
     }
   });
 

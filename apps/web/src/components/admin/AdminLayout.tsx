@@ -139,7 +139,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   // Render Admin Console Dashboard Shell once authenticated & authorized
   return (
-    <div className="flex min-h-screen bg-slate-950 text-slate-100 font-sans">
+    <div className="admin-scope flex min-h-screen bg-slate-950 text-slate-100 font-sans">
       <AdminSidebar />
       <div className="flex-1 flex flex-col min-w-0">
         <AdminHeader />

@@ -21,6 +21,54 @@
   }
 }
 
+@layer components {
+  /* Isolated Admin UI Form Controls Styling */
+  .admin-scope input:not([type="checkbox"]):not([type="radio"]):not([type="color"]),
+  .admin-scope textarea,
+  .admin-scope select {
+    color: inherit;
+  }
+
+  .admin-scope .bg-white input:not([type="checkbox"]):not([type="radio"]):not([type="color"]),
+  .admin-scope .bg-white textarea,
+  .admin-scope .bg-white select,
+  .admin-scope .bg-gray-50 input:not([type="checkbox"]):not([type="radio"]):not([type="color"]),
+  .admin-scope .bg-gray-50 textarea,
+  .admin-scope .bg-gray-50 select,
+  .admin-scope input.bg-white,
+  .admin-scope textarea.bg-white,
+  .admin-scope select.bg-white {
+    color: #111827 !important;
+    background-color: #ffffff;
+  }
+
+  .admin-scope .bg-white input::placeholder,
+  .admin-scope .bg-white textarea::placeholder,
+  .admin-scope .bg-gray-50 input::placeholder,
+  .admin-scope .bg-gray-50 textarea::placeholder,
+  .admin-scope input.bg-white::placeholder,
+  .admin-scope textarea.bg-white::placeholder {
+    color: #6b7280 !important;
+    opacity: 1 !important;
+  }
+
+  .admin-scope select option {
+    color: #111827;
+    background-color: #ffffff;
+  }
+
+  .admin-scope .bg-slate-950 select option,
+  .admin-scope select.bg-slate-950 option {
+    color: #ffffff;
+    background-color: #090d16;
+  }
+
+  .admin-scope .bg-white label,
+  .admin-scope .bg-gray-50 label {
+    color: #374151;
+  }
+}
+
 /* Custom scrollbar utility */
 .scrollbar-none::-webkit-scrollbar {
   display: none;
