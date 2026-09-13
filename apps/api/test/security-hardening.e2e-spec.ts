@@ -559,4 +559,132 @@ describe('Phase 10: Security, Hardening & Concurrency (E2E)', () => {
     expect(res.body.checks.database).toBe('up');
     expect(res.body.checks.redis).toBe('up');
   });
+
+  // -------------------------------------------------------------
+  // Test 22-26: Focused Admin Authentication & Authorization Flow
+  // -------------------------------------------------------------
+  it('22. Admin Flow - Unauthenticated GET /admin/dashboard returns 401', async () => {
+    await request(app.getHttpServer())
+      .get('/api/admin/dashboard')
+      .set('X-Forwarded-Host', domainA)
+      .expect(401);
+  });
+
+  it('23. Admin Flow - Authenticated non-admin customer access returns 403', async () => {
+    await request(app.getHttpServer())
+      .get('/api/admin/dashboard')
+      .set('Authorization', `Bearer ${tokenCustomerA}`)
+      .set('X-Forwarded-Host', domainA)
+      .expect(403);
+  });
+
+  it('24. Admin Flow - Authorized store owner/admin access returns 200 OK', async () => {
+    const res = await request(app.getHttpServer())
+      .get('/api/admin/dashboard')
+      .set('Authorization', `Bearer ${tokenOwnerA}`)
+      .set('X-Forwarded-Host', domainA)
+      .expect(200);
+
+    expect(res.body).toHaveProperty('storeName', 'Sec Store A');
+  });
+
+  it('25. Admin Flow - Expired/invalid authentication token returns 401', async () => {
+    await request(app.getHttpServer())
+      .get('/api/admin/dashboard')
+      .set('Authorization', 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.invalid.signature')
+      .set('X-Forwarded-Host', domainA)
+      .expect(401);
+  });
+
+  it('26. Admin Flow - Tenant isolation prevents Store B admin from accessing Store A dashboard', async () => {
+    await request(app.getHttpServer())
+      .get('/api/admin/dashboard')
+      .set('Authorization', `Bearer ${tokenOwnerB}`)
+      .set('X-Forwarded-Host', domainA)
+      .expect(403);
+  });
+
+  // -------------------------------------------------------------
+  // Test 27-32: Local Product Image Upload & Deletion Flow
+  // -------------------------------------------------------------
+  let uploadedImageId: string;
+
+  it('27. Image Upload - Authorized admin upload saves file locally & stores ProductImage record', async () => {
+    const dummyJpgBuffer = Buffer.from(
+      '/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAP//////////////////////////////////////////////////////////////////////////////////////wgALCAABAAEBAREA/8QAFBABAAAAAAAAAAAAAAAAAAAAAP/aAAgBAQABPxA=',
+      'base64',
+    );
+
+    const res = await request(app.getHttpServer())
+      .post(`/api/admin/products/${productA.id}/images/upload`)
+      .set('Authorization', `Bearer ${tokenOwnerA}`)
+      .set('X-Forwarded-Host', domainA)
+      .attach('file', dummyJpgBuffer, 'hoodie-sample.jpg')
+      .field('altText', 'Sample Hoodie')
+      .expect(201);
+
+    expect(res.body).toHaveProperty('id');
+    expect(res.body.productId).toBe(productA.id);
+    expect(res.body.url).toContain('/uploads/products/');
+    expect(res.body.altText).toBe('Sample Hoodie');
+
+    uploadedImageId = res.body.id;
+  });
+
+  it('28. Image Upload - Unauthorized customer access blocked with 403', async () => {
+    const dummyBuffer = Buffer.from('fake image data');
+
+    await request(app.getHttpServer())
+      .post(`/api/admin/products/${productA.id}/images/upload`)
+      .set('Authorization', `Bearer ${tokenCustomerA}`)
+      .set('X-Forwarded-Host', domainA)
+      .attach('file', dummyBuffer, 'test.jpg')
+      .expect(403);
+  });
+
+  it('29. Image Upload - Invalid image type rejected with 400', async () => {
+    const textBuffer = Buffer.from('console.log("hello world")');
+
+    await request(app.getHttpServer())
+      .post(`/api/admin/products/${productA.id}/images/upload`)
+      .set('Authorization', `Bearer ${tokenOwnerA}`)
+      .set('X-Forwarded-Host', domainA)
+      .attach('file', textBuffer, 'script.txt')
+      .expect(400);
+  });
+
+  it('30. Image Upload - Oversized image file (> 5MB) rejected with 400', async () => {
+    const largeBuffer = Buffer.alloc(6 * 1024 * 1024); // 6MB
+
+    await request(app.getHttpServer())
+      .post(`/api/admin/products/${productA.id}/images/upload`)
+      .set('Authorization', `Bearer ${tokenOwnerA}`)
+      .set('X-Forwarded-Host', domainA)
+      .attach('file', largeBuffer, 'huge-image.jpg')
+      .expect(400);
+  });
+
+  it('31. Image Upload - Tenant isolation prevents Store B admin from uploading to Store A product', async () => {
+    const dummyBuffer = Buffer.from('test');
+
+    await request(app.getHttpServer())
+      .post(`/api/admin/products/${productA.id}/images/upload`)
+      .set('Authorization', `Bearer ${tokenOwnerB}`)
+      .set('X-Forwarded-Host', domainA)
+      .attach('file', dummyBuffer, 'store-b-hack.jpg')
+      .expect(403);
+  });
+
+  it('32. Image Deletion - Authorized admin can delete uploaded ProductImage', async () => {
+    expect(uploadedImageId).toBeDefined();
+
+    await request(app.getHttpServer())
+      .delete(`/api/admin/products/${productA.id}/images/${uploadedImageId}`)
+      .set('Authorization', `Bearer ${tokenOwnerA}`)
+      .set('X-Forwarded-Host', domainA)
+      .expect(200);
+
+    const deletedRecord = await prisma.productImage.findUnique({ where: { id: uploadedImageId } });
+    expect(deletedRecord).toBeNull();
+  });
 });

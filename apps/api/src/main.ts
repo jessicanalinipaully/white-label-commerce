@@ -1,6 +1,8 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe, Logger } from '@nestjs/common';
-import { json } from 'express';
+import * as express from 'express';
+import * as path from 'path';
+import * as fs from 'fs';
 import { AppModule } from './app.module';
 import { GlobalExceptionFilter } from './common/filters/global-exception.filter';
 
@@ -26,8 +28,22 @@ async function bootstrap() {
   const expressApp = app.getHttpAdapter().getInstance();
   expressApp.set('trust proxy', 1);
 
+  // Serve local uploaded product images
+  const uploadsDir = path.join(process.cwd(), 'uploads');
+  if (!fs.existsSync(uploadsDir)) {
+    fs.mkdirSync(uploadsDir, { recursive: true });
+  }
+  expressApp.use('/uploads', (req: any, res: any, next: () => void) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    next();
+  }, express.static(uploadsDir));
+  expressApp.use('/api/uploads', (req: any, res: any, next: () => void) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    next();
+  }, express.static(uploadsDir));
+
   // Body parser size limit
-  app.use(json({ limit: '1mb' }));
+  app.use(express.json({ limit: '1mb' }));
 
   // Security Headers Middleware
   app.use((req: any, res: any, next: () => void) => {

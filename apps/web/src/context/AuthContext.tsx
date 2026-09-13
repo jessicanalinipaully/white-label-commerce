@@ -5,7 +5,8 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 interface AuthContextType {
   user: any;
   token: string | null;
-  setToken: (token: string | null) => void;
+  setToken: (token: string | null, user?: any) => void;
+  setUser: (user: any) => void;
   logout: () => void;
 }
 
@@ -13,6 +14,7 @@ const AuthContext = createContext<AuthContextType>({
   user: null,
   token: null,
   setToken: () => {},
+  setUser: () => {},
   logout: () => {},
 });
 
@@ -34,24 +36,37 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
-  const setToken = (newToken: string | null) => {
+  const setToken = (newToken: string | null, newUser?: any) => {
     setTokenState(newToken);
     if (newToken) {
       localStorage.setItem('accessToken', newToken);
+      if (newUser) {
+        setUserState(newUser);
+        localStorage.setItem('user', JSON.stringify(newUser));
+      }
     } else {
       localStorage.removeItem('accessToken');
       localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      setUserState(null);
+    }
+  };
+
+  const setUser = (newUser: any) => {
+    setUserState(newUser);
+    if (newUser) {
+      localStorage.setItem('user', JSON.stringify(newUser));
+    } else {
+      localStorage.removeItem('user');
     }
   };
 
   const logout = () => {
     setToken(null);
-    setUserState(null);
-    localStorage.removeItem('user');
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, setToken, logout }}>
+    <AuthContext.Provider value={{ user, token, setToken, setUser, logout }}>
       {children}
     </AuthContext.Provider>
   );

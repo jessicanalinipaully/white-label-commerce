@@ -9,8 +9,11 @@ import {
   Patch,
   Post,
   Query,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { TenantAuthGuard } from '../tenant/tenant-auth.guard';
 import { StoreRoleGuard } from './guards/store-role.guard';
@@ -102,6 +105,39 @@ export class AdminController {
   @StoreRoles(StoreUserRole.OWNER, StoreUserRole.ADMIN, StoreUserRole.MANAGER)
   deleteProduct(@CurrentTenant() tenant: TenantContext, @Param('id') id: string) {
     return this.adminService.deleteProduct(tenant.store.id, id);
+  }
+
+  /** 2.1 PRODUCT IMAGES */
+  @Post('products/:productId/images')
+  @StoreRoles(StoreUserRole.OWNER, StoreUserRole.ADMIN, StoreUserRole.MANAGER)
+  createProductImage(
+    @CurrentTenant() tenant: TenantContext,
+    @Param('productId') productId: string,
+    @Body() dto: { url: string; altText?: string; sortOrder?: number },
+  ) {
+    return this.adminService.createProductImage(tenant.store.id, productId, dto);
+  }
+
+  @Post('products/:productId/images/upload')
+  @StoreRoles(StoreUserRole.OWNER, StoreUserRole.ADMIN, StoreUserRole.MANAGER)
+  @UseInterceptors(FileInterceptor('file'))
+  uploadProductImage(
+    @CurrentTenant() tenant: TenantContext,
+    @Param('productId') productId: string,
+    @UploadedFile() file: any,
+    @Body() dto: { altText?: string },
+  ) {
+    return this.adminService.uploadProductImage(tenant.store.id, productId, file, dto?.altText);
+  }
+
+  @Delete('products/:productId/images/:imageId')
+  @StoreRoles(StoreUserRole.OWNER, StoreUserRole.ADMIN, StoreUserRole.MANAGER)
+  deleteProductImage(
+    @CurrentTenant() tenant: TenantContext,
+    @Param('productId') productId: string,
+    @Param('imageId') imageId: string,
+  ) {
+    return this.adminService.deleteProductImage(tenant.store.id, productId, imageId);
   }
 
   /** 3. CATEGORIES */

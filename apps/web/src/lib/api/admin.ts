@@ -5,7 +5,9 @@ function getHeaders(token?: string, host?: string): HeadersInit {
     'Content-Type': 'application/json',
   };
   if (token) headers['Authorization'] = `Bearer ${token}`;
-  if (host) headers['X-Forwarded-Host'] = host;
+  const effectiveHost =
+    host || (typeof window !== 'undefined' ? window.location.hostname.replace(/:\d+$/, '') : undefined);
+  if (effectiveHost) headers['X-Forwarded-Host'] = effectiveHost;
   return headers;
 }
 
@@ -13,7 +15,9 @@ async function request(url: string, options: RequestInit = {}) {
   const res = await fetch(url, options);
   if (!res.ok) {
     const errorData = await res.json().catch(() => ({}));
-    throw new Error(errorData.message || `Request failed with status ${res.status}`);
+    const err: any = new Error(errorData.message || `Request failed with status ${res.status}`);
+    err.status = res.status;
+    throw err;
   }
   return res.json();
 }
@@ -66,6 +70,64 @@ export async function updateAdminProduct(token: string, id: string, data: any, h
 
 export async function deleteAdminProduct(token: string, id: string, host?: string) {
   return request(`${API_BASE}/admin/products/${id}`, {
+    method: 'DELETE',
+    headers: getHeaders(token, host),
+  });
+}
+
+export async function createAdminProductImage(
+  token: string,
+  productId: string,
+  data: { url: string; altText?: string; sortOrder?: number },
+  host?: string,
+) {
+  return request(`${API_BASE}/admin/products/${productId}/images`, {
+    method: 'POST',
+    headers: getHeaders(token, host),
+    body: JSON.stringify(data),
+  });
+}
+
+export async function uploadAdminProductImage(
+  token: string,
+  productId: string,
+  file: File,
+  altText?: string,
+  host?: string,
+) {
+  const formData = new FormData();
+  formData.append('file', file);
+  if (altText) formData.append('altText', altText);
+
+  const headers: Record<string, string> = {};
+  if (token) headers['Authorization'] = `Bearer ${token}`;
+  const effectiveHost =
+    host || (typeof window !== 'undefined' ? window.location.hostname.replace(/:\d+$/, '') : undefined);
+  if (effectiveHost) headers['X-Forwarded-Host'] = effectiveHost;
+
+  const res = await fetch(`${API_BASE}/admin/products/${productId}/images/upload`, {
+    method: 'POST',
+    headers,
+    body: formData,
+  });
+
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}));
+    const err: any = new Error(errorData.message || `Upload failed with status ${res.status}`);
+    err.status = res.status;
+    throw err;
+  }
+
+  return res.json();
+}
+
+export async function deleteAdminProductImage(
+  token: string,
+  productId: string,
+  imageId: string,
+  host?: string,
+) {
+  return request(`${API_BASE}/admin/products/${productId}/images/${imageId}`, {
     method: 'DELETE',
     headers: getHeaders(token, host),
   });

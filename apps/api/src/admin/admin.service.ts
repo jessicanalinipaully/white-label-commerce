@@ -1,3 +1,6 @@
+import * as fs from 'fs';
+import * as path from 'path';
+import { randomBytes } from 'crypto';
 import {
   BadRequestException,
   Injectable,
@@ -340,6 +343,106 @@ export class AdminService {
 
     return this.prisma.product.delete({
       where: { id },
+    });
+  }
+
+  /** 2.1 PRODUCT IMAGES */
+  async createProductImage(
+    storeId: string,
+    productId: string,
+    dto: { url: string; altText?: string; sortOrder?: number },
+  ): Promise<any> {
+    const product = await this.prisma.product.findFirst({
+      where: { id: productId, storeId },
+    });
+    if (!product) {
+      throw new NotFoundException('Product not found in current store');
+    }
+    if (!dto.url || !dto.url.trim()) {
+      throw new BadRequestException('Image URL is required');
+    }
+    return this.prisma.productImage.create({
+      data: {
+        productId,
+        url: dto.url.trim(),
+        altText: dto.altText ? dto.altText.trim() : null,
+        sortOrder: dto.sortOrder !== undefined ? Number(dto.sortOrder) : 0,
+      },
+    });
+  }
+
+  async uploadProductImage(
+    storeId: string,
+    productId: string,
+    file: any,
+    altText?: string,
+  ): Promise<any> {
+    const product = await this.prisma.product.findFirst({
+      where: { id: productId, storeId },
+    });
+    if (!product) {
+      throw new NotFoundException('Product not found in current store');
+    }
+
+    if (!file || !file.buffer) {
+      throw new BadRequestException('No image file provided');
+    }
+
+    const allowedMimeTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+    if (!allowedMimeTypes.includes(file.mimetype)) {
+      throw new BadRequestException('Invalid file type. Only JPEG, PNG, and WEBP images are allowed.');
+    }
+
+    const maxSize = 5 * 1024 * 1024;
+    if (file.size > maxSize) {
+      throw new BadRequestException('File size exceeds the 5MB limit');
+    }
+
+    const uploadsDir = path.join(process.cwd(), 'uploads', 'products');
+    if (!fs.existsSync(uploadsDir)) {
+      fs.mkdirSync(uploadsDir, { recursive: true });
+    }
+
+    const fileExt = path.extname(file.originalname || '').toLowerCase() || '.jpg';
+    const safeFilename = `${Date.now()}-${randomBytes(8).toString('hex')}${fileExt}`;
+    const filePath = path.join(uploadsDir, safeFilename);
+
+    fs.writeFileSync(filePath, file.buffer);
+
+    const baseUrl = process.env.API_BASE_URL || 'http://localhost:4000';
+    const imageUrl = `${baseUrl}/uploads/products/${safeFilename}`;
+
+    const lastImage = await this.prisma.productImage.findFirst({
+      where: { productId },
+      orderBy: { sortOrder: 'desc' },
+    });
+    const sortOrder = lastImage ? lastImage.sortOrder + 1 : 0;
+
+    return this.prisma.productImage.create({
+      data: {
+        productId,
+        url: imageUrl,
+        altText: altText ? altText.trim() : product.name,
+        sortOrder,
+      },
+    });
+  }
+
+  async deleteProductImage(storeId: string, productId: string, imageId: string): Promise<any> {
+    const product = await this.prisma.product.findFirst({
+      where: { id: productId, storeId },
+    });
+    if (!product) {
+      throw new NotFoundException('Product not found in current store');
+    }
+    const image = await this.prisma.productImage.findFirst({
+      where: { id: imageId, productId },
+    });
+    if (!image) {
+      throw new NotFoundException('Image not found for current product');
+    }
+    return this.prisma.productImage.delete({
+      where: { id: imageId },
     });
   }
 
