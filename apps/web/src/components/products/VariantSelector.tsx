@@ -66,7 +66,7 @@ export function VariantSelector({ variants, selectedVariantId, onSelect }: Varia
                 disabled={!available}
                 className={`px-4 py-2 rounded-xl text-sm font-medium border transition-all ${
                   selected
-                    ? 'border-indigo-500 bg-indigo-500/20 text-indigo-300'
+                    ? 'border-primary bg-primary/20 text-primary font-semibold'
                     : available
                     ? 'border-slate-700 bg-slate-800 text-slate-300 hover:border-slate-500'
                     : 'border-slate-800 bg-slate-900 text-slate-600 cursor-not-allowed line-through'
@@ -107,7 +107,7 @@ export function VariantSelector({ variants, selectedVariantId, onSelect }: Varia
                     title={!available ? 'Out of stock' : val}
                     className={`min-w-[3rem] px-4 py-2 rounded-xl text-sm font-semibold border transition-all ${
                       isSelected
-                        ? 'border-indigo-500 bg-indigo-500/20 text-indigo-300 ring-2 ring-indigo-500/30'
+                        ? 'border-primary bg-primary/20 text-primary ring-2 ring-primary/30'
                         : available
                         ? 'border-slate-700 bg-slate-800 text-slate-200 hover:border-slate-500 hover:bg-slate-700'
                         : 'border-slate-800 bg-slate-900 text-slate-600 cursor-not-allowed relative'

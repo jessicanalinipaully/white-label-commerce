@@ -724,4 +724,36 @@ describe('Phase 10: Security, Hardening & Concurrency (E2E)', () => {
 
     expect(resAfter.body.some((c: any) => c.id === tempCat.id)).toBe(false);
   });
+
+  // -------------------------------------------------------------
+  // Test 34: Storefront Theme Configuration Application & Isolation
+  // -------------------------------------------------------------
+  it('34. Theme Configuration - Admin saved theme persists in DB and is returned by storefront config for tenant', async () => {
+    const testColor = '#E91E63';
+
+    // 1. Update theme via Admin API for Store A
+    await request(app.getHttpServer())
+      .patch('/api/admin/theme')
+      .set('Authorization', `Bearer ${tokenOwnerA}`)
+      .set('X-Forwarded-Host', domainA)
+      .send({ primaryColor: testColor })
+      .expect(200);
+
+    // 2. Verify Storefront API for Store A returns saved primary color
+    const resA = await request(app.getHttpServer())
+      .get('/api/storefront/config')
+      .set('X-Forwarded-Host', domainA)
+      .expect(200);
+
+    expect(resA.body.theme.primaryColor).toBe(testColor);
+
+    // 3. Tenant isolation: Store B storefront config must NOT be affected
+    const resB = await request(app.getHttpServer())
+      .get('/api/storefront/config')
+      .set('X-Forwarded-Host', domainB)
+      .expect(200);
+
+    expect(resB.body.theme.primaryColor).not.toBe(testColor);
+  });
 });
+

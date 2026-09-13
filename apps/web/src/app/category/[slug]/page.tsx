@@ -50,9 +50,9 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
       </nav>
 
       {/* Category Header */}
-      <div className="p-8 rounded-3xl bg-gradient-to-r from-slate-900 via-indigo-950/30 to-slate-900 border border-slate-800 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+      <div className="p-8 rounded-3xl bg-slate-900 border border-slate-800 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
         <div className="space-y-2">
-          <span className="text-xs font-semibold uppercase tracking-wider text-indigo-400">Category</span>
+          <span className="text-xs font-semibold uppercase tracking-wider text-primary">Category</span>
           <h1 className="text-3xl font-extrabold text-white tracking-tight">{category.name}</h1>
           {category.description && <p className="text-slate-300 text-sm max-w-xl">{category.description}</p>}
         </div>

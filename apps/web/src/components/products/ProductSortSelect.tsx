@@ -35,7 +35,7 @@ export function ProductSortSelect() {
     <select
       value={current}
       onChange={(e) => handleChange(e.target.value)}
-      className="px-4 py-2 rounded-xl bg-slate-800 border border-slate-700 text-sm text-slate-200 focus:outline-none focus:border-indigo-500 cursor-pointer"
+      className="px-4 py-2 rounded-xl bg-slate-800 border border-slate-700 text-sm text-slate-200 focus:outline-none focus:border-primary cursor-pointer"
     >
       {SORT_OPTIONS.map((opt) => (
         <option key={opt.value} value={opt.value}>

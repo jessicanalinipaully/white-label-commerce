@@ -17,7 +17,7 @@ export function StorefrontNav({ categories }: StorefrontNavProps) {
         href="/products"
         className={`px-3 py-1.5 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${
           pathname === '/products'
-            ? 'bg-indigo-600/20 text-indigo-300 font-semibold'
+            ? 'bg-primary/20 text-primary font-semibold'
             : 'text-slate-300 hover:bg-slate-800 hover:text-white'
         }`}
       >
@@ -32,7 +32,7 @@ export function StorefrontNav({ categories }: StorefrontNavProps) {
             href={href}
             className={`px-3 py-1.5 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${
               isActive
-                ? 'bg-indigo-600/20 text-indigo-300 font-semibold'
+                ? 'bg-primary/20 text-primary font-semibold'
                 : 'text-slate-300 hover:bg-slate-800 hover:text-white'
             }`}
           >

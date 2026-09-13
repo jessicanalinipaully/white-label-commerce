@@ -5,10 +5,10 @@ import { StoreHomepageSection } from '@commerce/types';
 
 export default function PromoBannerSection({ section }: { section: StoreHomepageSection }) {
   return (
-    <section className="my-10 p-6 sm:p-10 rounded-3xl bg-gradient-to-r from-indigo-900/60 via-purple-900/40 to-slate-900 border border-indigo-500/30 text-center sm:text-left flex flex-col sm:flex-row items-center justify-between gap-6 shadow-xl shadow-indigo-950/40">
+    <section className="my-10 p-6 sm:p-10 rounded-3xl bg-slate-900 border border-primary/30 text-center sm:text-left flex flex-col sm:flex-row items-center justify-between gap-6 shadow-xl">
       <div className="space-y-2 max-w-xl">
         {section.subtitle && (
-          <span className="text-xs font-bold uppercase tracking-widest text-indigo-300">
+          <span className="text-xs font-bold uppercase tracking-widest text-primary">
             {section.subtitle}
           </span>
         )}

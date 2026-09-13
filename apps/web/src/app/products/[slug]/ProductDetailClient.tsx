@@ -57,7 +57,7 @@ export function ProductDetailClient({ product }: { product: Product }) {
         {/* Category & Status */}
         <div className="flex items-center justify-between">
           {product.category ? (
-            <span className="text-xs font-semibold uppercase tracking-wider text-indigo-400">
+            <span className="text-xs font-semibold uppercase tracking-wider text-primary">
               {product.category.name}
             </span>
           ) : (
@@ -131,7 +131,7 @@ export function ProductDetailClient({ product }: { product: Product }) {
             <button
               onClick={handleAddToCart}
               disabled={isOutOfStock}
-              className="flex-1 h-12 rounded-xl bg-indigo-600 hover:bg-indigo-500 disabled:bg-slate-800 disabled:text-slate-600 disabled:cursor-not-allowed font-bold text-white transition-all shadow-lg shadow-indigo-600/30 flex items-center justify-center gap-2"
+              className="flex-1 h-12 rounded-xl bg-primary hover:bg-primary-hover disabled:bg-slate-800 disabled:text-slate-600 disabled:cursor-not-allowed font-bold text-white transition-all shadow-lg shadow-primary/30 flex items-center justify-center gap-2"
             >
               <span>{isOutOfStock ? 'Out of Stock' : 'Add to Cart'}</span>
               {!isOutOfStock && <span>🛒</span>}

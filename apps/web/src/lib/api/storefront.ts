@@ -120,3 +120,16 @@ export async function fetchCategoryProducts(
     return null;
   }
 }
+
+export async function fetchStorefrontConfig(host?: string): Promise<any | null> {
+  try {
+    const res = await fetch(`${API_BASE}/storefront/config`, {
+      headers: buildHeaders(host),
+      cache: 'no-store',
+    });
+    if (!res.ok) return null;
+    return res.json();
+  } catch {
+    return null;
+  }
+}

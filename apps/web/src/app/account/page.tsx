@@ -127,7 +127,7 @@ export default function AccountPage() {
               onChange={(e) => setEmailInput(e.target.value)}
               placeholder="alice@urbanthread.com"
               required
-              className="w-full px-4 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-sm text-white focus:outline-none focus:border-indigo-500"
+              className="w-full px-4 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-sm text-white focus:outline-none focus:border-primary"
             />
           </div>
 
@@ -139,13 +139,13 @@ export default function AccountPage() {
               onChange={(e) => setPasswordInput(e.target.value)}
               placeholder="••••••••"
               required
-              className="w-full px-4 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-sm text-white focus:outline-none focus:border-indigo-500"
+              className="w-full px-4 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-sm text-white focus:outline-none focus:border-primary"
             />
           </div>
 
           <button
             type="submit"
-            className="w-full py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 font-bold text-white transition-colors"
+            className="w-full py-3 rounded-xl bg-primary hover:bg-primary-hover font-bold text-white transition-colors"
           >
             Sign In
           </button>
@@ -161,7 +161,7 @@ export default function AccountPage() {
         <div>
           <h1 className="text-3xl font-extrabold text-white">Customer Account</h1>
           <p className="text-sm text-slate-400 mt-1">
-            Signed in as <span className="text-indigo-400 font-semibold">{profile?.user?.email || 'Customer'}</span>
+            Signed in as <span className="text-primary font-semibold">{profile?.user?.email || 'Customer'}</span>
           </p>
         </div>
 
@@ -181,7 +181,7 @@ export default function AccountPage() {
             onClick={() => setActiveTab(tab)}
             className={`pb-3 text-sm font-semibold capitalize border-b-2 transition-colors ${
               activeTab === tab
-                ? 'border-indigo-500 text-indigo-400'
+                ? 'border-primary text-primary'
                 : 'border-transparent text-slate-400 hover:text-slate-200'
             }`}
           >
@@ -217,7 +217,7 @@ export default function AccountPage() {
             <h2 className="text-lg font-bold text-white">Saved Shipping Addresses</h2>
             <button
               onClick={() => setShowAddressModal(true)}
-              className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-sm font-bold text-white transition-colors"
+              className="px-4 py-2 rounded-xl bg-primary hover:bg-primary-hover text-sm font-bold text-white transition-colors"
             >
               + Add Address
             </button>
@@ -228,27 +228,13 @@ export default function AccountPage() {
               No saved addresses yet.
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {addresses.map((addr) => (
-                <div key={addr.id} className="p-5 rounded-2xl bg-slate-900 border border-slate-800 space-y-2 relative">
-                  {addr.isDefault && (
-                    <span className="px-2 py-0.5 rounded text-xs font-semibold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
-                      Default
-                    </span>
-                  )}
-                  <p className="font-bold text-slate-100">{addr.firstName} {addr.lastName}</p>
+                <div key={addr.id} className="p-4 rounded-xl bg-slate-900 border border-slate-800 text-sm space-y-1">
+                  <p className="font-bold text-white">{addr.firstName} {addr.lastName}</p>
                   <p className="text-xs text-slate-400">{addr.addressLine1} {addr.addressLine2}</p>
                   <p className="text-xs text-slate-400">{addr.city}, {addr.state} {addr.postalCode}</p>
-                  <p className="text-xs text-slate-400">{addr.country} &bull; 📞 {addr.phone}</p>
-
-                  <div className="pt-2 flex justify-end">
-                    <button
-                      onClick={() => handleDeleteAddress(addr.id)}
-                      className="text-xs text-red-400 hover:underline"
-                    >
-                      Delete
-                    </button>
-                  </div>
+                  <p className="text-xs text-slate-400">📞 {addr.phone}</p>
                 </div>
               ))}
             </div>
@@ -256,102 +242,86 @@ export default function AccountPage() {
 
           {/* Add Address Modal */}
           {showAddressModal && (
-            <div className="fixed inset-0 z-50 bg-black/70 flex items-center justify-center p-4">
-              <form
-                onSubmit={handleCreateAddress}
-                className="bg-slate-900 border border-slate-800 rounded-2xl p-6 max-w-md w-full space-y-4"
-              >
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+              <div className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
                 <h3 className="text-lg font-bold text-white">Add Shipping Address</h3>
-
-                <div className="grid grid-cols-2 gap-3">
+                <form onSubmit={handleCreateAddress} className="space-y-3">
+                  <div className="grid grid-cols-2 gap-2">
+                    <input
+                      placeholder="First Name"
+                      required
+                      value={addressForm.firstName}
+                      onChange={(e) => setAddressForm({ ...addressForm, firstName: e.target.value })}
+                      className="px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-sm text-white"
+                    />
+                    <input
+                      placeholder="Last Name"
+                      required
+                      value={addressForm.lastName}
+                      onChange={(e) => setAddressForm({ ...addressForm, lastName: e.target.value })}
+                      className="px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-sm text-white"
+                    />
+                  </div>
                   <input
-                    placeholder="First Name"
+                    placeholder="Phone"
                     required
-                    value={addressForm.firstName}
-                    onChange={(e) => setAddressForm({ ...addressForm, firstName: e.target.value })}
-                    className="px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-sm text-white"
+                    value={addressForm.phone}
+                    onChange={(e) => setAddressForm({ ...addressForm, phone: e.target.value })}
+                    className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-sm text-white"
                   />
                   <input
-                    placeholder="Last Name"
+                    placeholder="Address Line 1"
                     required
-                    value={addressForm.lastName}
-                    onChange={(e) => setAddressForm({ ...addressForm, lastName: e.target.value })}
-                    className="px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-sm text-white"
-                  />
-                </div>
-
-                <input
-                  placeholder="Phone Number"
-                  required
-                  value={addressForm.phone}
-                  onChange={(e) => setAddressForm({ ...addressForm, phone: e.target.value })}
-                  className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-sm text-white"
-                />
-
-                <input
-                  placeholder="Address Line 1"
-                  required
-                  value={addressForm.addressLine1}
-                  onChange={(e) => setAddressForm({ ...addressForm, addressLine1: e.target.value })}
-                  className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-sm text-white"
-                />
-
-                <input
-                  placeholder="Address Line 2 (Optional)"
-                  value={addressForm.addressLine2}
-                  onChange={(e) => setAddressForm({ ...addressForm, addressLine2: e.target.value })}
-                  className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-sm text-white"
-                />
-
-                <div className="grid grid-cols-3 gap-2">
-                  <input
-                    placeholder="City"
-                    required
-                    value={addressForm.city}
-                    onChange={(e) => setAddressForm({ ...addressForm, city: e.target.value })}
-                    className="px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-sm text-white"
+                    value={addressForm.addressLine1}
+                    onChange={(e) => setAddressForm({ ...addressForm, addressLine1: e.target.value })}
+                    className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-sm text-white"
                   />
                   <input
-                    placeholder="State"
-                    required
-                    value={addressForm.state}
-                    onChange={(e) => setAddressForm({ ...addressForm, state: e.target.value })}
-                    className="px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-sm text-white"
+                    placeholder="Address Line 2 (Optional)"
+                    value={addressForm.addressLine2}
+                    onChange={(e) => setAddressForm({ ...addressForm, addressLine2: e.target.value })}
+                    className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-sm text-white"
                   />
-                  <input
-                    placeholder="Pincode"
-                    required
-                    value={addressForm.postalCode}
-                    onChange={(e) => setAddressForm({ ...addressForm, postalCode: e.target.value })}
-                    className="px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-sm text-white"
-                  />
-                </div>
-
-                <label className="flex items-center gap-2 text-xs text-slate-300">
-                  <input
-                    type="checkbox"
-                    checked={addressForm.isDefault}
-                    onChange={(e) => setAddressForm({ ...addressForm, isDefault: e.target.checked })}
-                  />
-                  Set as default address
-                </label>
-
-                <div className="flex gap-2 pt-2">
-                  <button
-                    type="button"
-                    onClick={() => setShowAddressModal(false)}
-                    className="flex-1 py-2 rounded-xl bg-slate-800 text-sm font-semibold text-slate-300"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    className="flex-1 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-sm font-semibold text-white"
-                  >
-                    Save Address
-                  </button>
-                </div>
-              </form>
+                  <div className="grid grid-cols-3 gap-2">
+                    <input
+                      placeholder="City"
+                      required
+                      value={addressForm.city}
+                      onChange={(e) => setAddressForm({ ...addressForm, city: e.target.value })}
+                      className="px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-sm text-white"
+                    />
+                    <input
+                      placeholder="State"
+                      required
+                      value={addressForm.state}
+                      onChange={(e) => setAddressForm({ ...addressForm, state: e.target.value })}
+                      className="px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-sm text-white"
+                    />
+                    <input
+                      placeholder="Pincode"
+                      required
+                      value={addressForm.postalCode}
+                      onChange={(e) => setAddressForm({ ...addressForm, postalCode: e.target.value })}
+                      className="px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-sm text-white"
+                    />
+                  </div>
+                  <div className="flex gap-2 pt-2">
+                    <button
+                      type="button"
+                      onClick={() => setShowAddressModal(false)}
+                      className="flex-1 py-2 rounded-xl bg-slate-800 text-sm font-semibold text-slate-300"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      className="flex-1 py-2 rounded-xl bg-primary hover:bg-primary-hover text-sm font-semibold text-white"
+                    >
+                      Save Address
+                    </button>
+                  </div>
+                </form>
+              </div>
             </div>
           )}
         </div>
@@ -369,7 +339,7 @@ export default function AccountPage() {
               {orders.map((ord) => (
                 <div key={ord.id} className="p-5 rounded-2xl bg-slate-900 border border-slate-800 flex items-center justify-between gap-4">
                   <div>
-                    <span className="font-mono text-sm font-bold text-indigo-400">{ord.orderNumber}</span>
+                    <span className="font-mono text-sm font-bold text-primary">{ord.orderNumber}</span>
                     <p className="text-xs text-slate-400 mt-1">Placed on {new Date(ord.createdAt).toLocaleDateString()}</p>
                     <p className="text-xs font-semibold text-slate-300 mt-1">
                       {ord.items?.length || 0} item(s) &bull; Status: <span className="text-amber-400">{ord.status}</span>
@@ -379,7 +349,7 @@ export default function AccountPage() {
                     <p className="text-lg font-bold text-white">₹{Number(ord.total).toFixed(2)}</p>
                     <Link
                       href={`/orders/${ord.id}`}
-                      className="inline-block text-xs font-semibold text-indigo-400 hover:underline"
+                      className="inline-block text-xs font-semibold text-primary hover:underline"
                     >
                       View Order Details →
                     </Link>

@@ -34,7 +34,7 @@ export function StorefrontHeader({ storeInfo, categories }: StorefrontHeaderProp
               {branding?.logoUrl ? (
                 <img src={branding.logoUrl} alt={storeName} className="h-8 max-w-[160px] object-contain" />
               ) : (
-                <span className="bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
+                <span className="text-primary font-extrabold">
                   {storeName}
                 </span>
               )}
@@ -49,7 +49,7 @@ export function StorefrontHeader({ storeInfo, categories }: StorefrontHeaderProp
             <div className="flex items-center gap-3">
               <Link
                 href="/account"
-                className="p-2 text-slate-300 hover:text-indigo-400 hover:bg-slate-900 rounded-xl transition-colors text-sm font-semibold flex items-center gap-1"
+                className="p-2 text-slate-300 hover:text-primary hover:bg-slate-900 rounded-xl transition-colors text-sm font-semibold flex items-center gap-1"
                 aria-label="Customer Account"
               >
                 <span>👤</span>
@@ -71,12 +71,12 @@ export function StorefrontHeader({ storeInfo, categories }: StorefrontHeaderProp
 
               <button
                 onClick={() => setIsCartOpen(true)}
-                className="relative p-2 text-slate-300 hover:text-indigo-400 hover:bg-slate-900 rounded-xl transition-colors"
+                className="relative p-2 text-slate-300 hover:text-primary hover:bg-slate-900 rounded-xl transition-colors"
                 aria-label="Shopping Cart"
               >
                 <span className="text-xl">🛒</span>
                 {cartCount > 0 && (
-                  <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-indigo-500 text-white text-xs font-bold flex items-center justify-center">
+                  <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-primary text-white text-xs font-bold flex items-center justify-center">
                     {cartCount}
                   </span>
                 )}

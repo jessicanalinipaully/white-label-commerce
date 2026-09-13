@@ -119,7 +119,7 @@ export default function CheckoutPage() {
         <p className="text-sm text-slate-400">Please sign in to your customer account to complete checkout.</p>
         <Link
           href="/account"
-          className="inline-block px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 font-bold text-white transition-colors"
+          className="inline-block px-6 py-3 rounded-xl bg-primary hover:bg-primary-hover font-bold text-white transition-colors"
         >
           Sign In to Checkout →
         </Link>
@@ -135,7 +135,7 @@ export default function CheckoutPage() {
         <p className="text-sm text-slate-400">Add some products to your cart before proceeding to checkout.</p>
         <Link
           href="/products"
-          className="inline-block px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 font-bold text-white transition-colors"
+          className="inline-block px-6 py-3 rounded-xl bg-primary hover:bg-primary-hover font-bold text-white transition-colors"
         >
           Browse Products
         </Link>
@@ -166,7 +166,7 @@ export default function CheckoutPage() {
               {!showAddressForm && !createdOrder && (
                 <button
                   onClick={() => setShowAddressForm(true)}
-                  className="text-xs font-semibold text-indigo-400 hover:underline"
+                  className="text-xs font-semibold text-primary hover:underline"
                 >
                   + Add New Address
                 </button>
@@ -238,7 +238,7 @@ export default function CheckoutPage() {
                   </button>
                   <button
                     type="submit"
-                    className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-xs font-bold text-white"
+                    className="px-4 py-2 rounded-xl bg-primary hover:bg-primary-hover text-xs font-bold text-white"
                   >
                     Save & Use Address
                   </button>
@@ -251,7 +251,7 @@ export default function CheckoutPage() {
                     key={addr.id}
                     className={`flex items-start gap-3 p-4 rounded-xl border cursor-pointer transition-all ${
                       selectedAddressId === addr.id
-                        ? 'border-indigo-500 bg-indigo-500/10'
+                        ? 'border-primary bg-primary/10'
                         : 'border-slate-800 bg-slate-800/40 hover:border-slate-700'
                     }`}
                   >
@@ -261,7 +261,7 @@ export default function CheckoutPage() {
                       disabled={Boolean(createdOrder)}
                       checked={selectedAddressId === addr.id}
                       onChange={() => setSelectedAddressId(addr.id)}
-                      className="mt-1 accent-indigo-500"
+                      className="mt-1 accent-primary"
                     />
                     <div className="text-sm">
                       <p className="font-bold text-white">{addr.firstName} {addr.lastName}</p>
@@ -285,7 +285,7 @@ export default function CheckoutPage() {
                     key={rate.id}
                     className={`flex items-center justify-between p-4 rounded-xl border cursor-pointer transition-all ${
                       selectedRateId === rate.id
-                        ? 'border-indigo-500 bg-indigo-500/10'
+                        ? 'border-primary bg-primary/10'
                         : 'border-slate-800 bg-slate-800/40 hover:border-slate-700'
                     }`}
                   >
@@ -296,7 +296,7 @@ export default function CheckoutPage() {
                         disabled={Boolean(createdOrder)}
                         checked={selectedRateId === rate.id}
                         onChange={() => setSelectedRateId(rate.id)}
-                        className="accent-indigo-500"
+                        className="accent-primary"
                       />
                       <div>
                         <p className="font-bold text-slate-100 text-sm">{rate.name}</p>
@@ -323,7 +323,7 @@ export default function CheckoutPage() {
                 onChange={(e) => setNotes(e.target.value)}
                 placeholder="e.g. Leave at front door or call upon arrival"
                 rows={2}
-                className="w-full px-4 py-3 rounded-xl bg-slate-800 border border-slate-700 text-sm text-white focus:outline-none focus:border-indigo-500"
+                className="w-full px-4 py-3 rounded-xl bg-slate-800 border border-slate-700 text-sm text-white focus:outline-none focus:border-primary"
               />
             </div>
           )}
@@ -360,14 +360,14 @@ export default function CheckoutPage() {
                 </div>
                 <div className="border-t border-slate-800 pt-3 flex justify-between text-base font-bold text-white">
                   <span>Total</span>
-                  <span className="text-indigo-400">₹{grandTotal.toFixed(2)}</span>
+                  <span className="text-primary">₹{grandTotal.toFixed(2)}</span>
                 </div>
               </div>
 
               <button
                 onClick={handleCreateOrder}
                 disabled={submitting}
-                className="w-full py-4 rounded-xl bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 font-bold text-white transition-all shadow-lg shadow-indigo-600/30"
+                className="w-full py-4 rounded-xl bg-primary hover:bg-primary-hover disabled:opacity-50 font-bold text-white transition-all shadow-lg shadow-primary/30"
               >
                 {submitting ? 'Creating Order...' : 'Confirm Order & Proceed to Pay →'}
               </button>

@@ -11,7 +11,7 @@ export default function FeaturedProductsSection({ section }: { section: StoreHom
       <div className="flex items-center justify-between">
         <div>
           {section.subtitle && (
-            <span className="text-xs font-bold uppercase tracking-wider text-indigo-400">
+            <span className="text-xs font-bold uppercase tracking-wider text-primary">
               {section.subtitle}
             </span>
           )}
@@ -33,12 +33,12 @@ export default function FeaturedProductsSection({ section }: { section: StoreHom
           <div className="flex-1 space-y-3 text-center sm:text-left">
             <h3 className="text-xl font-bold text-white">{product.name}</h3>
             <p className="text-xs text-slate-400 line-clamp-2">{product.description || product.shortDescription}</p>
-            <p className="text-lg font-extrabold text-indigo-400">
+            <p className="text-lg font-extrabold text-primary">
               ₹{Number(product.price).toLocaleString('en-IN')}
             </p>
             <Link
               href={`/products/${product.slug}`}
-              className="inline-block px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-xs font-bold text-white transition-all shadow-md shadow-indigo-600/20"
+              className="inline-block px-5 py-2.5 rounded-xl bg-primary hover:bg-primary-hover text-xs font-bold text-white transition-all shadow-md shadow-primary/20"
             >
               View Featured Item →
             </Link>

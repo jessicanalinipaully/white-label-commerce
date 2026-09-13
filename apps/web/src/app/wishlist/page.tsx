@@ -62,7 +62,7 @@ export default function WishlistPage() {
               <div className="p-4 space-y-2">
                 <Link
                   href={`/products/${item.productSlug}`}
-                  className="font-semibold text-slate-100 text-sm hover:text-indigo-400 transition-colors line-clamp-1 block"
+                  className="font-semibold text-slate-100 text-sm hover:text-primary transition-colors line-clamp-1 block"
                 >
                   {item.productName}
                 </Link>
@@ -85,7 +85,7 @@ export default function WishlistPage() {
                     image: item.image,
                   });
                 }}
-                className="w-full py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-xs font-bold text-white transition-colors flex items-center justify-center gap-2"
+                className="w-full py-2.5 rounded-xl bg-primary hover:bg-primary-hover text-xs font-bold text-white transition-colors flex items-center justify-center gap-2"
               >
                 <span>Add to Cart</span>
                 <span>🛒</span>

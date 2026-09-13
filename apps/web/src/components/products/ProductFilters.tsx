@@ -41,7 +41,7 @@ export function ProductFilters({ categories }: ProductFiltersProps) {
             <button
               onClick={() => update('categoryId', '')}
               className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors ${
-                !currentCategory ? 'bg-indigo-600/20 text-indigo-300' : 'text-slate-300 hover:bg-slate-800'
+                !currentCategory ? 'bg-primary/20 text-primary font-semibold' : 'text-slate-300 hover:bg-slate-800'
               }`}
             >
               All categories
@@ -51,7 +51,7 @@ export function ProductFilters({ categories }: ProductFiltersProps) {
                 key={cat.id}
                 onClick={() => update('categoryId', cat.id)}
                 className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors ${
-                  currentCategory === cat.id ? 'bg-indigo-600/20 text-indigo-300' : 'text-slate-300 hover:bg-slate-800'
+                  currentCategory === cat.id ? 'bg-primary/20 text-primary font-semibold' : 'text-slate-300 hover:bg-slate-800'
                 }`}
               >
                 {cat.name}
@@ -74,7 +74,7 @@ export function ProductFilters({ categories }: ProductFiltersProps) {
             value={minPrice}
             onChange={(e) => update('minPrice', e.target.value)}
             min="0"
-            className="w-full px-3 py-2 rounded-lg bg-slate-800 border border-slate-700 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+            className="w-full px-3 py-2 rounded-lg bg-slate-800 border border-slate-700 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-primary"
           />
           <span className="text-slate-500 text-sm">–</span>
           <input
@@ -83,7 +83,7 @@ export function ProductFilters({ categories }: ProductFiltersProps) {
             value={maxPrice}
             onChange={(e) => update('maxPrice', e.target.value)}
             min="0"
-            className="w-full px-3 py-2 rounded-lg bg-slate-800 border border-slate-700 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+            className="w-full px-3 py-2 rounded-lg bg-slate-800 border border-slate-700 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-primary"
           />
         </div>
       </div>

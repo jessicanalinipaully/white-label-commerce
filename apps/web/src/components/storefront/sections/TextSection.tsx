@@ -6,7 +6,7 @@ export default function TextSection({ section }: { section: StoreHomepageSection
   return (
     <section className="my-10 p-8 rounded-3xl bg-slate-900 border border-slate-800 space-y-4">
       {section.subtitle && (
-        <span className="text-xs font-bold uppercase tracking-wider text-indigo-400">
+        <span className="text-xs font-bold uppercase tracking-wider text-primary">
           {section.subtitle}
         </span>
       )}

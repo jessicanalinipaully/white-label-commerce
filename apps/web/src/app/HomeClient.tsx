@@ -32,9 +32,9 @@ export default function HomeClient({ categories, initialProducts, storeName }: H
   return (
     <div className="space-y-16">
       {/* Hero Banner */}
-      <section className="relative rounded-3xl overflow-hidden bg-gradient-to-br from-indigo-950 via-slate-900 to-slate-950 border border-slate-800 p-8 sm:p-12 md:p-16">
+      <section className="relative rounded-3xl overflow-hidden bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 border border-slate-800 p-8 sm:p-12 md:p-16">
         <div className="relative max-w-2xl space-y-6">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-xs font-semibold text-indigo-400">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-xs font-semibold text-primary">
             <span>✨ Welcome to {storeName}</span>
           </div>
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight leading-none">
@@ -46,7 +46,7 @@ export default function HomeClient({ categories, initialProducts, storeName }: H
           <div className="flex flex-wrap gap-4 pt-2">
             <Link
               href="/products"
-              className="px-6 py-3.5 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold transition-all shadow-lg shadow-indigo-600/30"
+              className="px-6 py-3.5 rounded-2xl bg-primary hover:bg-primary-hover text-white font-bold transition-all shadow-lg shadow-primary/30"
             >
               Shop All Products →
             </Link>
@@ -59,7 +59,7 @@ export default function HomeClient({ categories, initialProducts, storeName }: H
         <section className="space-y-6">
           <div className="flex items-center justify-between">
             <h2 className="text-2xl font-bold text-white tracking-tight">Shop by Category</h2>
-            <Link href="/products" className="text-sm font-semibold text-indigo-400 hover:text-indigo-300">
+            <Link href="/products" className="text-sm font-semibold text-primary hover:text-primary/80">
               View all →
             </Link>
           </div>
@@ -68,7 +68,7 @@ export default function HomeClient({ categories, initialProducts, storeName }: H
               <Link
                 key={cat.id}
                 href={`/category/${cat.slug}`}
-                className="group p-5 rounded-2xl bg-slate-900 border border-slate-800 hover:border-indigo-500/50 text-center transition-all"
+                className="group p-5 rounded-2xl bg-slate-900 border border-slate-800 hover:border-primary/50 text-center transition-all"
               >
                 <div className="text-3xl mb-2">📁</div>
                 <h3 className="font-semibold text-slate-200 text-sm group-hover:text-white truncate">
@@ -87,7 +87,7 @@ export default function HomeClient({ categories, initialProducts, storeName }: H
             <h2 className="text-2xl font-bold text-white tracking-tight">Featured Products</h2>
             <p className="text-sm text-slate-400">Handpicked items for this store</p>
           </div>
-          <Link href="/products" className="text-sm font-semibold text-indigo-400 hover:text-indigo-300">
+          <Link href="/products" className="text-sm font-semibold text-primary hover:text-primary/80">
             Browse catalog →
           </Link>
         </div>

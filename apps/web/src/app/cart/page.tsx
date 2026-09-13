@@ -58,13 +58,13 @@ export default function CartPage() {
             </div>
             <div className="border-t border-slate-800 pt-3 flex justify-between text-base font-bold text-white">
               <span>Estimated Total</span>
-              <span className="text-indigo-400">₹{subtotal.toFixed(2)}</span>
+              <span className="text-primary">₹{subtotal.toFixed(2)}</span>
             </div>
           </div>
 
           <Link
             href="/checkout"
-            className="block w-full py-4 rounded-xl bg-indigo-600 hover:bg-indigo-500 font-bold text-white transition-all shadow-lg shadow-indigo-600/30 text-center"
+            className="block w-full py-4 rounded-xl bg-primary hover:bg-primary-hover font-bold text-white transition-all shadow-lg shadow-primary/30 text-center"
           >
             Proceed to Checkout →
           </Link>

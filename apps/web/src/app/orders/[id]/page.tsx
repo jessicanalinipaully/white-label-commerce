@@ -40,7 +40,7 @@ export default function OrderDetailPage({ params }: { params: { id: string } }) 
         <div className="text-5xl">📄</div>
         <h1 className="text-2xl font-bold text-white">Order Not Found</h1>
         <p className="text-sm text-slate-400">This order does not exist or does not belong to your account.</p>
-        <Link href="/account" className="inline-block px-6 py-2.5 rounded-xl bg-indigo-600 font-semibold text-white">
+        <Link href="/account" className="inline-block px-6 py-2.5 rounded-xl bg-primary hover:bg-primary-hover font-semibold text-white">
           Back to Account
         </Link>
       </div>
@@ -59,7 +59,7 @@ export default function OrderDetailPage({ params }: { params: { id: string } }) 
       )}
 
       {/* Header */}
-      <div className="p-8 rounded-3xl bg-gradient-to-r from-slate-900 via-indigo-950/40 to-slate-900 border border-slate-800 space-y-4">
+      <div className="p-8 rounded-3xl bg-slate-900 border border-slate-800 space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <div>
             <span className={`text-xs font-semibold uppercase tracking-wider ${isPaid ? 'text-emerald-400' : 'text-amber-400'}`}>
@@ -123,7 +123,7 @@ export default function OrderDetailPage({ params }: { params: { id: string } }) 
             </div>
             <div className="border-t border-slate-800 pt-3 flex justify-between text-base font-bold text-white">
               <span>Total</span>
-              <span className="text-indigo-400">₹{Number(order.total).toFixed(2)}</span>
+              <span className="text-primary">₹{Number(order.total).toFixed(2)}</span>
             </div>
           </div>
 

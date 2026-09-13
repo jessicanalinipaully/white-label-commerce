@@ -10,7 +10,7 @@ export default function FeaturedCategoriesSection({ section }: { section: StoreH
     <section className="my-12 p-8 rounded-3xl bg-slate-900 border border-slate-800 space-y-6">
       <div>
         {section.subtitle && (
-          <span className="text-xs font-bold uppercase tracking-wider text-indigo-400">
+          <span className="text-xs font-bold uppercase tracking-wider text-primary">
             {section.subtitle}
           </span>
         )}
@@ -27,7 +27,7 @@ export default function FeaturedCategoriesSection({ section }: { section: StoreH
           </div>
           <Link
             href={`/category/${category.slug}`}
-            className="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-xs font-bold text-white transition-all shadow-md shadow-indigo-600/20"
+            className="px-5 py-2.5 rounded-xl bg-primary hover:bg-primary-hover text-xs font-bold text-white transition-all shadow-md shadow-primary/20"
           >
             Browse Category →
           </Link>

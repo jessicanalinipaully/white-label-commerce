@@ -28,7 +28,7 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
           <div className="p-6 border-b border-slate-800 flex items-center justify-between">
             <h2 className="text-lg font-bold flex items-center gap-2">
               <span>🛒 Shopping Cart</span>
-              <span className="text-xs px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300">
+              <span className="text-xs px-2 py-0.5 rounded-full bg-primary/20 text-primary font-semibold">
                 {count} {count === 1 ? 'item' : 'items'}
               </span>
             </h2>
@@ -48,7 +48,7 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                 <p className="text-slate-400 font-medium">Your cart is empty</p>
                 <button
                   onClick={onClose}
-                  className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-sm font-semibold transition-colors"
+                  className="px-4 py-2 rounded-xl bg-primary hover:bg-primary-hover text-sm font-semibold transition-colors"
                 >
                   Continue Shopping
                 </button>
@@ -71,7 +71,7 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                 <Link
                   href="/cart"
                   onClick={onClose}
-                  className="block w-full py-3 text-center rounded-xl bg-indigo-600 hover:bg-indigo-500 font-bold transition-colors shadow-lg shadow-indigo-600/30"
+                  className="block w-full py-3 text-center rounded-xl bg-primary hover:bg-primary-hover font-bold transition-colors shadow-lg shadow-primary/30"
                 >
                   View Full Cart & Checkout
                 </Link>

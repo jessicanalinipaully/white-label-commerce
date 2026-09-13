@@ -2,6 +2,18 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --color-primary: #4F46E5;
+  --color-primary-hover: #4338CA;
+  --color-secondary: #06B6D4;
+  --color-accent: #F59E0B;
+  --color-bg: #0F172A;
+  --color-text: #F8FAFC;
+  --font-heading: 'Inter', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --radius: 0.75rem;
+}
+
 @layer base {
   body {
     @apply bg-slate-950 text-slate-100;

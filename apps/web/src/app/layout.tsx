@@ -1,11 +1,12 @@
 import type { Metadata } from 'next';
 import { headers } from 'next/headers';
 import './globals.css';
-import { fetchCategories, fetchStoreInfo } from '@/lib/api/storefront';
+import { fetchCategories, fetchStoreInfo, fetchStorefrontConfig } from '@/lib/api/storefront';
 import { CartProvider } from '@/context/CartContext';
 import { WishlistProvider } from '@/context/WishlistContext';
 import { AuthProvider } from '@/context/AuthContext';
 import { ThemeProvider } from '@/context/ThemeContext';
+import { adjustColorBrightness } from '@/lib/theme';
 import { StorefrontHeader } from '@/components/layout/StorefrontHeader';
 import { StorefrontFooter } from '@/components/layout/StorefrontFooter';
 
@@ -29,16 +30,35 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   const host = headers().get('host') || undefined;
-  const [storeInfo, categories] = await Promise.all([
+  const [storeInfo, categories, storefrontConfig] = await Promise.all([
     fetchStoreInfo(host),
     fetchCategories(host),
+    fetchStorefrontConfig(host),
   ]);
+
+  const theme = storefrontConfig?.theme;
+  const primaryColor = theme?.primaryColor || '#4F46E5';
+  const primaryHoverColor = theme?.primaryColor
+    ? adjustColorBrightness(theme.primaryColor, -10)
+    : '#4338CA';
+  const secondaryColor = theme?.secondaryColor || '#06B6D4';
+  const accentColor = theme?.accentColor || '#F59E0B';
 
   return (
     <html lang="en" className="dark">
-      <body className="bg-slate-950 text-slate-100 min-h-screen flex flex-col antialiased selection:bg-indigo-500 selection:text-white">
+      <body
+        style={
+          {
+            '--color-primary': primaryColor,
+            '--color-primary-hover': primaryHoverColor,
+            '--color-secondary': secondaryColor,
+            '--color-accent': accentColor,
+          } as React.CSSProperties
+        }
+        className="bg-slate-950 text-slate-100 min-h-screen flex flex-col antialiased selection:bg-primary selection:text-white"
+      >
         <AuthProvider>
-          <ThemeProvider>
+          <ThemeProvider initialConfig={storefrontConfig}>
             <CartProvider>
               <WishlistProvider>
                 <StorefrontHeader storeInfo={storeInfo} categories={categories} />
@@ -54,3 +74,4 @@ export default async function RootLayout({
     </html>
   );
 }
+

@@ -8,7 +8,7 @@ export default function HeroSection({ section }: { section: StoreHomepageSection
     <section className="relative overflow-hidden rounded-3xl bg-slate-900 border border-slate-800 p-8 sm:p-16 text-center sm:text-left my-8">
       <div className="max-w-2xl space-y-6 z-10 relative">
         {section.subtitle && (
-          <span className="text-xs font-bold uppercase tracking-widest text-indigo-400">
+          <span className="text-xs font-bold uppercase tracking-widest text-primary">
             {section.subtitle}
           </span>
         )}
@@ -24,7 +24,7 @@ export default function HeroSection({ section }: { section: StoreHomepageSection
           <div className="pt-2">
             <Link
               href={section.buttonUrl}
-              className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-indigo-600 hover:bg-indigo-500 font-bold text-white transition-all shadow-lg shadow-indigo-600/30 text-base"
+              className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-primary hover:bg-primary-hover font-bold text-white transition-all shadow-lg shadow-primary/30 text-base"
             >
               <span>{section.buttonText}</span>
               <span>→</span>
