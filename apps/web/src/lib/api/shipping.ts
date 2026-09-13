@@ -23,7 +23,7 @@ export async function fetchShippingRates(host?: string): Promise<ShippingRate[]>
   try {
     const res = await fetch(`${API_BASE}/shipping/rates`, {
       headers: getHeaders(undefined, host),
-      next: { revalidate: 60 },
+      cache: 'no-store',
     });
     if (!res.ok) return [];
     return res.json();

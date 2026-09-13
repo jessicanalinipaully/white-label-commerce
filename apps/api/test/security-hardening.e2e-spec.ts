@@ -687,4 +687,41 @@ describe('Phase 10: Security, Hardening & Concurrency (E2E)', () => {
     const deletedRecord = await prisma.productImage.findUnique({ where: { id: uploadedImageId } });
     expect(deletedRecord).toBeNull();
   });
+
+  // -------------------------------------------------------------
+  // Test 33: Storefront Category Deletion Synchronization
+  // -------------------------------------------------------------
+  it('33. Category Deletion - Deleted category immediately disappears from storefront API response', async () => {
+    // 1. Create a category
+    const tempCat = await prisma.category.create({
+      data: {
+        storeId: storeA.id,
+        name: 'Test Collection To Delete',
+        slug: `test-del-cat-${Date.now()}`,
+      },
+    });
+
+    // 2. Storefront lists the category
+    const resBefore = await request(app.getHttpServer())
+      .get('/api/storefront/categories')
+      .set('X-Forwarded-Host', domainA)
+      .expect(200);
+
+    expect(resBefore.body.some((c: any) => c.id === tempCat.id)).toBe(true);
+
+    // 3. Admin deletes the category
+    await request(app.getHttpServer())
+      .delete(`/api/admin/categories/${tempCat.id}`)
+      .set('Authorization', `Bearer ${tokenOwnerA}`)
+      .set('X-Forwarded-Host', domainA)
+      .expect(200);
+
+    // 4. Storefront immediately reflects the current database state
+    const resAfter = await request(app.getHttpServer())
+      .get('/api/storefront/categories')
+      .set('X-Forwarded-Host', domainA)
+      .expect(200);
+
+    expect(resAfter.body.some((c: any) => c.id === tempCat.id)).toBe(false);
+  });
 });

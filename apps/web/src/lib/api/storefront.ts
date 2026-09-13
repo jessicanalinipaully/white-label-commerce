@@ -7,8 +7,10 @@ function buildHeaders(host?: string): HeadersInit {
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
   };
-  if (host) {
-    headers['X-Forwarded-Host'] = host;
+  const effectiveHost =
+    host || (typeof window !== 'undefined' ? window.location.hostname.replace(/:\d+$/, '') : undefined);
+  if (effectiveHost) {
+    headers['X-Forwarded-Host'] = effectiveHost;
   }
   return headers;
 }
@@ -35,7 +37,7 @@ export async function fetchStoreInfo(host?: string): Promise<StoreInfo | null> {
   try {
     const res = await fetch(`${API_BASE}/storefront/store`, {
       headers: buildHeaders(host),
-      next: { revalidate: 300 },
+      cache: 'no-store',
     });
     if (!res.ok) return null;
     return res.json();
@@ -48,7 +50,7 @@ export async function fetchCategories(host?: string): Promise<Category[]> {
   try {
     const res = await fetch(`${API_BASE}/storefront/categories`, {
       headers: buildHeaders(host),
-      next: { revalidate: 120 },
+      cache: 'no-store',
     });
     if (!res.ok) return [];
     return res.json();
@@ -72,7 +74,7 @@ export async function fetchProducts(
   });
   const res = await fetch(`${API_BASE}/storefront/products${qs}`, {
     headers: buildHeaders(host),
-    next: { revalidate: 60 },
+    cache: 'no-store',
   });
   if (!res.ok) throw new Error('Failed to fetch products');
   return res.json();
@@ -82,7 +84,7 @@ export async function fetchProductBySlug(slug: string, host?: string): Promise<P
   try {
     const res = await fetch(`${API_BASE}/storefront/products/${encodeURIComponent(slug)}`, {
       headers: buildHeaders(host),
-      next: { revalidate: 60 },
+      cache: 'no-store',
     });
     if (!res.ok) return null;
     return res.json();
@@ -109,7 +111,7 @@ export async function fetchCategoryProducts(
       `${API_BASE}/storefront/category/${encodeURIComponent(categorySlug)}${qs}`,
       {
         headers: buildHeaders(host),
-        next: { revalidate: 60 },
+        cache: 'no-store',
       },
     );
     if (!res.ok) return null;
