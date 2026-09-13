@@ -3,8 +3,9 @@ import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { JwtAuthGuard } from './jwt-auth.guard';
-import { AuthResponse } from '@commerce/types';
+import { AuthResponse, TenantContext } from '@commerce/types';
 import { StoreService } from '../store/store.service';
+import { CurrentTenant } from '../tenant/tenant.decorator';
 
 @Controller('auth')
 export class AuthController {
@@ -14,14 +15,20 @@ export class AuthController {
   ) {}
 
   @Post('register')
-  async register(@Body() dto: RegisterDto): Promise<AuthResponse> {
-    return this.authService.register(dto);
+  async register(
+    @CurrentTenant() tenant: TenantContext,
+    @Body() dto: RegisterDto,
+  ): Promise<AuthResponse> {
+    return this.authService.register(dto, tenant);
   }
 
   @HttpCode(HttpStatus.OK)
   @Post('login')
-  async login(@Body() dto: LoginDto): Promise<AuthResponse> {
-    return this.authService.login(dto);
+  async login(
+    @CurrentTenant() tenant: TenantContext,
+    @Body() dto: LoginDto,
+  ): Promise<AuthResponse> {
+    return this.authService.login(dto, tenant);
   }
 
   @UseGuards(JwtAuthGuard)
