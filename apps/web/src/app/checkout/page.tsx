@@ -9,6 +9,7 @@ import { executeCheckout } from '@/lib/api/order';
 import { fetchShippingRates, attachOrderShippingRate, ShippingRate } from '@/lib/api/shipping';
 import { RazorpayButton } from '@/components/checkout/RazorpayButton';
 import { getClientHost } from '@/lib/tenant';
+import { AddressFormWithGoogle } from '@/components/address/AddressFormWithGoogle';
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -174,76 +175,20 @@ export default function CheckoutPage() {
             </div>
 
             {showAddressForm ? (
-              <form onSubmit={handleAddAddress} className="space-y-3 pt-2">
-                <div className="grid grid-cols-2 gap-2">
-                  <input
-                    placeholder="First Name"
-                    required
-                    value={newAddr.firstName}
-                    onChange={(e) => setNewAddr({ ...newAddr, firstName: e.target.value })}
-                    className="px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-sm text-white"
-                  />
-                  <input
-                    placeholder="Last Name"
-                    required
-                    value={newAddr.lastName}
-                    onChange={(e) => setNewAddr({ ...newAddr, lastName: e.target.value })}
-                    className="px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-sm text-white"
-                  />
-                </div>
-                <input
-                  placeholder="Phone"
-                  required
-                  value={newAddr.phone}
-                  onChange={(e) => setNewAddr({ ...newAddr, phone: e.target.value })}
-                  className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-sm text-white"
+              <div className="pt-2 border-t border-slate-800">
+                <AddressFormWithGoogle
+                  submitLabel="Save & Use Address"
+                  onSave={async (data) => {
+                    if (!token) return;
+                    const created = await createCustomerAddress(token, data, host);
+                    setShowAddressForm(false);
+                    const updated = await fetchCustomerAddresses(token, host);
+                    setAddresses(updated);
+                    setSelectedAddressId(created.id);
+                  }}
+                  onCancel={() => setShowAddressForm(false)}
                 />
-                <input
-                  placeholder="Address Line 1"
-                  required
-                  value={newAddr.addressLine1}
-                  onChange={(e) => setNewAddr({ ...newAddr, addressLine1: e.target.value })}
-                  className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-sm text-white"
-                />
-                <div className="grid grid-cols-3 gap-2">
-                  <input
-                    placeholder="City"
-                    required
-                    value={newAddr.city}
-                    onChange={(e) => setNewAddr({ ...newAddr, city: e.target.value })}
-                    className="px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-sm text-white"
-                  />
-                  <input
-                    placeholder="State"
-                    required
-                    value={newAddr.state}
-                    onChange={(e) => setNewAddr({ ...newAddr, state: e.target.value })}
-                    className="px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-sm text-white"
-                  />
-                  <input
-                    placeholder="Pincode"
-                    required
-                    value={newAddr.postalCode}
-                    onChange={(e) => setNewAddr({ ...newAddr, postalCode: e.target.value })}
-                    className="px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-sm text-white"
-                  />
-                </div>
-                <div className="flex gap-2 pt-2">
-                  <button
-                    type="button"
-                    onClick={() => setShowAddressForm(false)}
-                    className="px-4 py-2 rounded-xl bg-slate-800 text-xs font-semibold text-slate-300"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    className="px-4 py-2 rounded-xl bg-primary hover:bg-primary-hover text-xs font-bold text-white"
-                  >
-                    Save & Use Address
-                  </button>
-                </div>
-              </form>
+              </div>
             ) : (
               <div className="space-y-3">
                 {addresses.map((addr) => (

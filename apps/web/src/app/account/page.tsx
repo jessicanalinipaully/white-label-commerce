@@ -13,6 +13,7 @@ import {
 } from '@/lib/api/customer';
 import { fetchCustomerOrders, Order } from '@/lib/api/order';
 import { getClientHost } from '@/lib/tenant';
+import { AddressFormWithGoogle } from '@/components/address/AddressFormWithGoogle';
 
 export default function AccountPage() {
   const { token, setToken } = useCart();
@@ -422,84 +423,18 @@ export default function AccountPage() {
           {/* Add Address Modal */}
           {showAddressModal && (
             <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-              <div className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
-                <h3 className="text-lg font-bold text-white">Add Shipping Address</h3>
-                <form onSubmit={handleCreateAddress} className="space-y-3">
-                  <div className="grid grid-cols-2 gap-2">
-                    <input
-                      placeholder="First Name"
-                      required
-                      value={addressForm.firstName}
-                      onChange={(e) => setAddressForm({ ...addressForm, firstName: e.target.value })}
-                      className="px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-sm text-white"
-                    />
-                    <input
-                      placeholder="Last Name"
-                      required
-                      value={addressForm.lastName}
-                      onChange={(e) => setAddressForm({ ...addressForm, lastName: e.target.value })}
-                      className="px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-sm text-white"
-                    />
-                  </div>
-                  <input
-                    placeholder="Phone"
-                    required
-                    value={addressForm.phone}
-                    onChange={(e) => setAddressForm({ ...addressForm, phone: e.target.value })}
-                    className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-sm text-white"
-                  />
-                  <input
-                    placeholder="Address Line 1"
-                    required
-                    value={addressForm.addressLine1}
-                    onChange={(e) => setAddressForm({ ...addressForm, addressLine1: e.target.value })}
-                    className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-sm text-white"
-                  />
-                  <input
-                    placeholder="Address Line 2 (Optional)"
-                    value={addressForm.addressLine2}
-                    onChange={(e) => setAddressForm({ ...addressForm, addressLine2: e.target.value })}
-                    className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-sm text-white"
-                  />
-                  <div className="grid grid-cols-3 gap-2">
-                    <input
-                      placeholder="City"
-                      required
-                      value={addressForm.city}
-                      onChange={(e) => setAddressForm({ ...addressForm, city: e.target.value })}
-                      className="px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-sm text-white"
-                    />
-                    <input
-                      placeholder="State"
-                      required
-                      value={addressForm.state}
-                      onChange={(e) => setAddressForm({ ...addressForm, state: e.target.value })}
-                      className="px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-sm text-white"
-                    />
-                    <input
-                      placeholder="Pincode"
-                      required
-                      value={addressForm.postalCode}
-                      onChange={(e) => setAddressForm({ ...addressForm, postalCode: e.target.value })}
-                      className="px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-sm text-white"
-                    />
-                  </div>
-                  <div className="flex gap-2 pt-2">
-                    <button
-                      type="button"
-                      onClick={() => setShowAddressModal(false)}
-                      className="flex-1 py-2 rounded-xl bg-slate-800 text-sm font-semibold text-slate-300"
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      type="submit"
-                      className="flex-1 py-2 rounded-xl bg-primary hover:bg-primary-hover text-sm font-semibold text-white"
-                    >
-                      Save Address
-                    </button>
-                  </div>
-                </form>
+              <div className="w-full max-w-lg bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4 max-h-[90vh] overflow-y-auto shadow-2xl">
+                <h3 className="text-lg font-bold text-white">Add Delivery Address</h3>
+                <AddressFormWithGoogle
+                  onSave={async (data) => {
+                    if (!token) return;
+                    await createCustomerAddress(token, data, host);
+                    setShowAddressModal(false);
+                    const updatedAddrs = await fetchCustomerAddresses(token, host);
+                    setAddresses(updatedAddrs);
+                  }}
+                  onCancel={() => setShowAddressModal(false)}
+                />
               </div>
             </div>
           )}

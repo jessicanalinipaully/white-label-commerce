@@ -4,11 +4,12 @@ import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { useCallback } from 'react';
 
 const SORT_OPTIONS = [
-  { value: '', label: 'Featured' },
+  { value: '', label: 'Recommended / Featured' },
+  { value: 'price_asc', label: 'Price: Low to High' },
+  { value: 'price_desc', label: 'Price: High to Low' },
   { value: 'newest', label: 'Newest' },
-  { value: 'price_asc', label: 'Price: Low → High' },
-  { value: 'price_desc', label: 'Price: High → Low' },
-  { value: 'name_asc', label: 'Name: A → Z' },
+  { value: 'name_asc', label: 'Name: A-Z' },
+  { value: 'name_desc', label: 'Name: Z-A' },
 ];
 
 export function ProductSortSelect() {

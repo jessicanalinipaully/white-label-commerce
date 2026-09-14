@@ -91,6 +91,9 @@ export class CustomerService {
           state: dto.state,
           postalCode: dto.postalCode,
           country: dto.country,
+          latitude: dto.latitude !== undefined && dto.latitude !== null ? dto.latitude : null,
+          longitude: dto.longitude !== undefined && dto.longitude !== null ? dto.longitude : null,
+          placeId: dto.placeId || null,
           isDefault,
         },
       });

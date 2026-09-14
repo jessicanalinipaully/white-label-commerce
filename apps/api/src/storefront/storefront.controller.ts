@@ -46,6 +46,10 @@ export class StorefrontController {
     @Query('categoryId') categoryId?: string,
     @Query('minPrice') minPrice?: any,
     @Query('maxPrice') maxPrice?: any,
+    @Query('size') size?: string,
+    @Query('color') color?: string,
+    @Query('inStock') inStock?: string,
+    @Query('discount') discount?: any,
     @Query('sortBy') sortBy?: string,
   ): Promise<any> {
     const storeId = this.resolveStoreId(req);
@@ -56,6 +60,10 @@ export class StorefrontController {
       categoryId,
       minPrice: parseNumberParam(minPrice),
       maxPrice: parseNumberParam(maxPrice),
+      size,
+      color,
+      inStock: inStock === 'true' || inStock === '1',
+      discount: parseNumberParam(discount),
       sortBy,
     });
   }
@@ -75,6 +83,10 @@ export class StorefrontController {
     @Query('q') q?: string,
     @Query('minPrice') minPrice?: any,
     @Query('maxPrice') maxPrice?: any,
+    @Query('size') size?: string,
+    @Query('color') color?: string,
+    @Query('inStock') inStock?: string,
+    @Query('discount') discount?: any,
     @Query('sortBy') sortBy?: string,
   ): Promise<any> {
     const storeId = this.resolveStoreId(req);
@@ -84,6 +96,10 @@ export class StorefrontController {
       q,
       minPrice: parseNumberParam(minPrice),
       maxPrice: parseNumberParam(maxPrice),
+      size,
+      color,
+      inStock: inStock === 'true' || inStock === '1',
+      discount: parseNumberParam(discount),
       sortBy,
     });
   }

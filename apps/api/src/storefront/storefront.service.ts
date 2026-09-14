@@ -9,6 +9,10 @@ export interface StorefrontProductQuery {
   categoryId?: string;
   minPrice?: number;
   maxPrice?: number;
+  size?: string;
+  color?: string;
+  inStock?: boolean;
+  discount?: number;
   sortBy?: string;
 }
 
@@ -49,7 +53,7 @@ export class StorefrontService {
     });
   }
 
-  async getProducts(storeId: string, query: StorefrontProductQuery): Promise<PaginatedResult<any>> {
+  async getProducts(storeId: string, query: StorefrontProductQuery): Promise<PaginatedResult<any> & { filterOptions?: any }> {
     const pageNum = Math.max(1, Number(query.page) || 1);
     const limitNum = Math.min(100, Math.max(1, Number(query.limit) || 20));
     const skip = (pageNum - 1) * limitNum;
@@ -58,8 +62,26 @@ export class StorefrontService {
     const where: any = { storeId, isActive: true };
 
     if (query.categoryId) {
-      const cat = await this.prisma.category.findFirst({ where: { id: query.categoryId, storeId } });
-      if (cat) where.categoryId = query.categoryId;
+      const rawCats = query.categoryId.split(',').map((c) => c.trim()).filter(Boolean);
+      if (rawCats.length > 0) {
+        const validCats = await this.prisma.category.findMany({
+          where: {
+            storeId,
+            isActive: true,
+            OR: [
+              { id: { in: rawCats } },
+              { slug: { in: rawCats } },
+            ],
+          },
+          select: { id: true },
+        });
+        const validCatIds = validCats.map((c) => c.id);
+        if (validCatIds.length > 0) {
+          where.categoryId = { in: validCatIds };
+        } else {
+          where.categoryId = 'no-matching-category';
+        }
+      }
     }
 
     if (query.q) {
@@ -73,14 +95,70 @@ export class StorefrontService {
     }
 
     const priceFilter: any = {};
-    if (query.minPrice !== undefined && !isNaN(query.minPrice)) {
-      priceFilter.gte = query.minPrice;
+    if (query.minPrice !== undefined && !isNaN(Number(query.minPrice))) {
+      priceFilter.gte = Number(query.minPrice);
     }
-    if (query.maxPrice !== undefined && !isNaN(query.maxPrice)) {
-      priceFilter.lte = query.maxPrice;
+    if (query.maxPrice !== undefined && !isNaN(Number(query.maxPrice))) {
+      priceFilter.lte = Number(query.maxPrice);
     }
     if (Object.keys(priceFilter).length > 0) {
       where.price = priceFilter;
+    }
+
+    const sizes = query.size ? query.size.split(',').map((s) => s.trim()).filter(Boolean) : [];
+    const colors = query.color ? query.color.split(',').map((c) => c.trim()).filter(Boolean) : [];
+    const inStockOnly = query.inStock === true;
+
+    const variantConditions: any[] = [{ isActive: true }];
+
+    if (inStockOnly) {
+      variantConditions.push({
+        inventory: {
+          is: {
+            quantity: { gt: 0 },
+          },
+        },
+      });
+    }
+
+    if (sizes.length > 0) {
+      variantConditions.push({
+        OR: sizes.flatMap((s) => [
+          { attributes: { path: ['size'], equals: s } },
+          { attributes: { path: ['Size'], equals: s } },
+        ]),
+      });
+    }
+
+    if (colors.length > 0) {
+      variantConditions.push({
+        OR: colors.flatMap((c) => [
+          { attributes: { path: ['color'], equals: c } },
+          { attributes: { path: ['Color'], equals: c } },
+        ]),
+      });
+    }
+
+    if (variantConditions.length > 1 || sizes.length > 0 || colors.length > 0 || inStockOnly) {
+      where.variants = {
+        some: {
+          AND: variantConditions,
+        },
+      };
+    }
+
+    if (query.discount !== undefined && !isNaN(Number(query.discount)) && Number(query.discount) > 0) {
+      const threshold = Number(query.discount) / 100;
+      const rawRows: { id: string }[] = await this.prisma.$queryRaw`
+        SELECT id FROM "Product"
+        WHERE "storeId" = ${storeId}
+          AND "isActive" = true
+          AND "compareAtPrice" IS NOT NULL
+          AND "compareAtPrice" > 0
+          AND ("compareAtPrice" - "price") / "compareAtPrice" >= ${threshold}
+      `;
+      const discountedIds = rawRows.map((r) => r.id);
+      where.id = { in: discountedIds };
     }
 
     let orderBy: any = { createdAt: 'desc' };
@@ -88,10 +166,12 @@ export class StorefrontService {
       case 'price_asc': orderBy = { price: 'asc' }; break;
       case 'price_desc': orderBy = { price: 'desc' }; break;
       case 'name_asc': orderBy = { name: 'asc' }; break;
+      case 'name_desc': orderBy = { name: 'desc' }; break;
       case 'newest': orderBy = { createdAt: 'desc' }; break;
+      case 'featured': orderBy = { createdAt: 'desc' }; break;
     }
 
-    const [data, total] = await Promise.all([
+    const [data, total, categories, allStoreVariants, priceBoundsAgg] = await Promise.all([
       this.prisma.product.findMany({
         where,
         skip,
@@ -115,9 +195,46 @@ export class StorefrontService {
         },
       }),
       this.prisma.product.count({ where }),
+      this.getCategories(storeId),
+      this.prisma.productVariant.findMany({
+        where: { storeId, isActive: true, product: { isActive: true } },
+        select: { attributes: true },
+      }),
+      this.prisma.product.aggregate({
+        where: { storeId, isActive: true },
+        _min: { price: true },
+        _max: { price: true },
+      }),
     ]);
 
-    return { data, total, page: pageNum, limit: limitNum, totalPages: Math.ceil(total / limitNum) };
+    const sizeSet = new Set<string>();
+    const colorSet = new Set<string>();
+    for (const v of allStoreVariants) {
+      const attrs = (v.attributes as Record<string, any>) || {};
+      const sizeVal = attrs.size || attrs.Size;
+      const colorVal = attrs.color || attrs.Color;
+      if (sizeVal && typeof sizeVal === 'string') sizeSet.add(sizeVal);
+      if (colorVal && typeof colorVal === 'string') colorSet.add(colorVal);
+    }
+
+    const filterOptions = {
+      categories,
+      availableSizes: Array.from(sizeSet).sort(),
+      availableColors: Array.from(colorSet).sort(),
+      priceBounds: {
+        min: priceBoundsAgg._min.price ? Number(priceBoundsAgg._min.price) : 0,
+        max: priceBoundsAgg._max.price ? Number(priceBoundsAgg._max.price) : 0,
+      },
+    };
+
+    return {
+      data,
+      total,
+      page: pageNum,
+      limit: limitNum,
+      totalPages: Math.ceil(total / limitNum),
+      filterOptions,
+    };
   }
 
   async getProductBySlug(storeId: string, slug: string): Promise<any> {

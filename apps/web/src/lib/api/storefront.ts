@@ -22,10 +22,14 @@ export interface ProductQuery {
   categoryId?: string;
   minPrice?: number;
   maxPrice?: number;
+  size?: string;
+  color?: string;
+  inStock?: boolean;
+  discount?: number;
   sortBy?: string;
 }
 
-function buildQueryString(params: Record<string, string | number | undefined>): string {
+function buildQueryString(params: Record<string, string | number | boolean | undefined>): string {
   const qs = Object.entries(params)
     .filter(([, v]) => v !== undefined && v !== '' && v !== null)
     .map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(String(v))}`)
@@ -70,6 +74,10 @@ export async function fetchProducts(
     categoryId: query.categoryId,
     minPrice: query.minPrice,
     maxPrice: query.maxPrice,
+    size: query.size,
+    color: query.color,
+    inStock: query.inStock,
+    discount: query.discount,
     sortBy: query.sortBy,
   });
   const res = await fetch(`${API_BASE}/storefront/products${qs}`, {

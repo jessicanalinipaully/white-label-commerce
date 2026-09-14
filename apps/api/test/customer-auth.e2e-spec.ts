@@ -217,4 +217,31 @@ describe('Customer Registration & Authentication Flow (e2e)', () => {
       .set('Authorization', `Bearer ${registeredToken}`)
       .expect(404);
   });
+
+  it('12. Customer address creation persists Google Maps latitude, longitude, and placeId', async () => {
+    const res = await request(app.getHttpServer())
+      .post('/api/customers/me/addresses')
+      .set('X-Forwarded-Host', domainA)
+      .set('Authorization', `Bearer ${registeredToken}`)
+      .send({
+        firstName: 'David',
+        lastName: 'Test',
+        phone: '9876543210',
+        addressLine1: 'Christ University Kengeri Campus',
+        city: 'Bengaluru',
+        state: 'Karnataka',
+        postalCode: '560074',
+        country: 'India',
+        latitude: 12.8631,
+        longitude: 77.4381,
+        placeId: 'ChIJgUb9-W8_rjsRk2_7k876543',
+      })
+      .expect(201);
+
+    expect(res.body.id).toBeDefined();
+    expect(res.body.addressLine1).toBe('Christ University Kengeri Campus');
+    expect(res.body.latitude).toBe('12.8631');
+    expect(res.body.longitude).toBe('77.4381');
+    expect(res.body.placeId).toBe('ChIJgUb9-W8_rjsRk2_7k876543');
+  });
 });

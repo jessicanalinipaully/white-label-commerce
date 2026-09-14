@@ -8,6 +8,8 @@ interface ProductGridProps {
   loading?: boolean;
   emptyTitle?: string;
   emptyDescription?: string;
+  actionLabel?: string;
+  actionHref?: string;
 }
 
 export function ProductGrid({
@@ -15,6 +17,8 @@ export function ProductGrid({
   loading = false,
   emptyTitle = 'No products found',
   emptyDescription = 'Try adjusting your search or filters.',
+  actionLabel = 'Clear Filters',
+  actionHref = '/products',
 }: ProductGridProps) {
   if (loading) {
     return (
@@ -32,8 +36,8 @@ export function ProductGrid({
         title={emptyTitle}
         description={emptyDescription}
         icon="🔍"
-        actionLabel="Browse all products"
-        actionHref="/products"
+        actionLabel={actionLabel}
+        actionHref={actionHref}
       />
     );
   }

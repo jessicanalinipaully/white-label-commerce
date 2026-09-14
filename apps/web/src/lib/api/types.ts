@@ -59,12 +59,29 @@ export interface Product {
   variants: ProductVariant[];
 }
 
+export interface FilterCategory {
+  id: string;
+  name: string;
+  slug: string;
+  description?: string | null;
+  imageUrl?: string | null;
+  _count?: { products: number };
+}
+
+export interface FilterOptions {
+  categories: FilterCategory[];
+  availableSizes: string[];
+  availableColors: string[];
+  priceBounds: { min: number; max: number };
+}
+
 export interface PaginatedResult<T> {
   data: T[];
   total: number;
   page: number;
   limit: number;
   totalPages: number;
+  filterOptions?: FilterOptions;
 }
 
 export interface CartItem {

@@ -37,7 +37,10 @@ export interface CustomerAddress {
   state: string;
   postalCode: string;
   country: string;
-  isDefault: boolean;
+  latitude?: number | string | null;
+  longitude?: number | string | null;
+  placeId?: string | null;
+  isDefault?: boolean;
 }
 
 export async function fetchCustomerProfile(token: string, host?: string): Promise<CustomerProfile | null> {
