@@ -16,6 +16,7 @@ import { OrderModule } from './order/order.module';
 import { ShippingModule } from './shipping/shipping.module';
 import { PaymentModule } from './payment/payment.module';
 import { AdminModule } from './admin/admin.module';
+import { WishlistModule } from './wishlist/wishlist.module';
 import { TenantMiddleware } from './tenant/tenant.middleware';
 import { RateLimiterMiddleware } from './common/middleware/rate-limiter.middleware';
 
@@ -41,6 +42,7 @@ import { RateLimiterMiddleware } from './common/middleware/rate-limiter.middlewa
     ShippingModule,
     PaymentModule,
     AdminModule,
+    WishlistModule,
   ],
 })
 export class AppModule implements NestModule {

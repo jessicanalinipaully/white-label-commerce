@@ -97,9 +97,23 @@ export interface CartItem {
 }
 
 export interface WishlistItem {
+  id?: string;
+  wishlistId?: string;
   productId: string;
   productName: string;
   productSlug: string;
   price: number;
+  compareAtPrice?: number | null;
   image: string | null;
+  isAvailable?: boolean;
+  categoryName?: string | null;
+  createdAt?: string;
+}
+
+export interface WishlistResponse {
+  id: string;
+  storeId: string;
+  customerId: string;
+  items: WishlistItem[];
+  totalItems: number;
 }

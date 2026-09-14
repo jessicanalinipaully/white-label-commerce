@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useCart } from '@/context/CartContext';
+import { useWishlist } from '@/context/WishlistContext';
 import {
   createCustomerAddress,
   CustomerAddress,
@@ -16,7 +17,13 @@ import { getClientHost } from '@/lib/tenant';
 import { AddressFormWithGoogle } from '@/components/address/AddressFormWithGoogle';
 
 export default function AccountPage() {
-  const { token, setToken } = useCart();
+  const { token, setToken: setCartToken } = useCart();
+  const { setToken: setWishlistToken } = useWishlist();
+
+  const handleSetToken = async (newToken: string | null) => {
+    await setCartToken(newToken);
+    await setWishlistToken(newToken);
+  };
   const [authMode, setAuthMode] = useState<'signin' | 'register'>('signin');
   const [emailInput, setEmailInput] = useState('');
   const [passwordInput, setPasswordInput] = useState('');
@@ -97,7 +104,7 @@ export default function AccountPage() {
         throw new Error(msg);
       }
       const data = await res.json();
-      await setToken(data.accessToken);
+      await handleSetToken(data.accessToken);
     } catch (err: any) {
       setAuthError(err.message || 'Login failed');
     } finally {
@@ -153,7 +160,7 @@ export default function AccountPage() {
       }
 
       const data = await res.json();
-      await setToken(data.accessToken);
+      await handleSetToken(data.accessToken);
     } catch (err: any) {
       setAuthError(err.message || 'Registration failed');
     } finally {
@@ -346,7 +353,7 @@ export default function AccountPage() {
         </div>
 
         <button
-          onClick={() => setToken(null)}
+          onClick={() => handleSetToken(null)}
           className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-semibold transition-colors"
         >
           Sign Out

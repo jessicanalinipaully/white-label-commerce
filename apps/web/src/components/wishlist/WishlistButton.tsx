@@ -4,7 +4,7 @@ import { useWishlist } from '@/context/WishlistContext';
 import { Product } from '@/lib/api/types';
 
 interface WishlistButtonProps {
-  product: Pick<Product, 'id' | 'name' | 'price' | 'slug' | 'images'>;
+  product: Pick<Product, 'id' | 'name' | 'price' | 'slug' | 'images'> & { compareAtPrice?: string | number | null };
   className?: string;
   size?: 'sm' | 'md';
 }
@@ -13,19 +13,24 @@ export function WishlistButton({ product, className = '', size = 'md' }: Wishlis
   const { inWishlist, add, remove } = useWishlist();
   const isWishlisted = inWishlist(product.id);
 
-  const toggle = (e: React.MouseEvent) => {
+  const toggle = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (isWishlisted) {
-      remove(product.id);
-    } else {
-      add({
-        productId: product.id,
-        productName: product.name,
-        productSlug: product.slug,
-        price: Number(product.price),
-        image: product.images?.[0]?.url ?? null,
-      });
+    try {
+      if (isWishlisted) {
+        await remove(product.id);
+      } else {
+        await add({
+          productId: product.id,
+          productName: product.name,
+          productSlug: product.slug,
+          price: Number(product.price),
+          compareAtPrice: product.compareAtPrice ? Number(product.compareAtPrice) : null,
+          image: product.images?.[0]?.url ?? null,
+        });
+      }
+    } catch (err) {
+      console.warn('Wishlist action failed:', err);
     }
   };
 

@@ -91,6 +91,7 @@ model Store {
   theme         StoreTheme?
   branding      StoreBranding?
   homepage      StoreHomepage?
+  wishlists     Wishlist[]
 }
 
 model StoreDomain {
@@ -159,6 +160,7 @@ model Product {
   cartItems        CartItem[]
   orderItems       OrderItem[]
   homepageSections StoreHomepageSection[]
+  wishlistItems    WishlistItem[]
 
   @@unique([storeId, slug])
   @@index([storeId])
@@ -230,6 +232,7 @@ model Customer {
   addresses CustomerAddress[]
   carts     Cart[]
   orders    Order[]
+  wishlists Wishlist[]
 
   @@unique([storeId, userId])
   @@index([storeId])
@@ -461,5 +464,33 @@ model StoreHomepageSection {
   @@index([homepageId])
   @@index([productId])
   @@index([categoryId])
+}
+
+model Wishlist {
+  id         String         @id @default(cuid())
+  storeId    String
+  store      Store          @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  customerId String
+  customer   Customer       @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  createdAt  DateTime       @default(now())
+  updatedAt  DateTime       @updatedAt
+  items      WishlistItem[]
+
+  @@unique([storeId, customerId])
+  @@index([storeId])
+  @@index([customerId])
+}
+
+model WishlistItem {
+  id         String   @id @default(cuid())
+  wishlistId String
+  wishlist   Wishlist @relation(fields: [wishlistId], references: [id], onDelete: Cascade)
+  productId  String
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  createdAt  DateTime @default(now())
+
+  @@unique([wishlistId, productId])
+  @@index([wishlistId])
+  @@index([productId])
 }
 
