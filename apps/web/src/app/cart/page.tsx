@@ -6,7 +6,16 @@ import { CartItemRow } from '@/components/cart/CartItem';
 import { EmptyState } from '@/components/ui/EmptyState';
 
 export default function CartPage() {
-  const { cart, count, subtotal, clear } = useCart();
+  const { cart, count, subtotal, clear, isHydrated } = useCart();
+
+  if (!isHydrated) {
+    return (
+      <div className="py-16 text-center text-slate-500">
+        <div className="inline-block text-3xl animate-bounce mb-2">🛒</div>
+        <p className="text-sm font-medium animate-pulse">Loading your cart...</p>
+      </div>
+    );
+  }
 
   if (cart.length === 0) {
     return (
